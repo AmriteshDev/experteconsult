@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './Components/Navbar';
+import Login from './Login';
+import Home from './Home.js';
+import Client from './Client.js';
 
 function App() {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("ProfileData");
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
+  console.log(userData)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <div className="App">
+        {userData?.SessionID && <Navbar />}
+        <Routes>
+          {userData?.SessionID ? (
+            userData.Role_Type === 1 ? (
+              <Route path="/" element={<Home />} />
+            ) : userData.Role_Type === 2 ? (
+              <Route path="/" element={<Client />} />
+            ) : (
+              <Route path="/" element={<Login />} />
+            )
+          ) : (
+            <Route path="/" element={<Login />} />
+          )}
+          <Route path="/home" element={<Home />} />
+          <Route path="/client" element={<Client />} />
+        </Routes>
+      </div>
+    </Router>
+  )
 }
 
 export default App;
