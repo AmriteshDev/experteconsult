@@ -7,19 +7,20 @@ import Client from './Client.js';
 
 function App() {
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("ProfileData");
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
     }
+    setLoading(false);
   }, []);
-  console.log(userData)
 
   return (
     <Router>
       <div className="App">
-        {userData?.SessionID && <Navbar />}
+        {!loading && userData && userData.SessionID && <Navbar />}
         <Routes>
           {userData?.SessionID ? (
             userData.Role_Type === 1 ? (
