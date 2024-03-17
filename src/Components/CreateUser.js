@@ -77,7 +77,9 @@ function CreateUser(props) {
             Roles: formData.Roles,
             Designation: formData.Designation,
             Whether_All_Clients: formData.Whether_All_Clients,
-            ClientID_Array: selectedOption.map((item) => item.value)
+        }
+        if (formData.Role_Type === "2") {
+            request.ClientID_Array = selectedOption?.map((item) => item.value)
         }
 
         const url = props.Selected_AdminID ? '/Update_Admin_Information' : '/Create_Admin_User';
