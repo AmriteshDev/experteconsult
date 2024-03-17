@@ -103,7 +103,7 @@ const Input = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 10px;
-  background-color: button;
+  background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
