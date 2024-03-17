@@ -66,26 +66,26 @@ const Home = () => {
         <Container>
             <HomeWrapper>
                 <HomeRow>
-                    <HomeCell flex={0.3} backgroundColor="#f7f7f7" borderTopLeftRadius="4px">S.no</HomeCell>
-                    <HomeCell flex={1} backgroundColor="#f7f7f7">Name</HomeCell>
-                    <HomeCell flex={1} backgroundColor="#f7f7f7">Phone</HomeCell>
-                    <HomeCell flex={1} backgroundColor="#f7f7f7">Email</HomeCell>
-                    <HomeCell flex={0.4} backgroundColor="#f7f7f7">Type</HomeCell>
-                    <HomeCell flex={0.3} backgroundColor="#f7f7f7" borderTopRightRadius="4px">Status</HomeCell>
-                    <HomeCell flex={0.3} backgroundColor="#f7f7f7" borderTopRightRadius="4px">Action</HomeCell>
+                    <HomeCell flex={0.3}>S.no</HomeCell>
+                    <HomeCell flex={1}>Name</HomeCell>
+                    <HomeCell flex={1}>Phone</HomeCell>
+                    <HomeCell flex={1}>Email</HomeCell>
+                    <HomeCell flex={0.4}>Type</HomeCell>
+                    <HomeCell flex={0.3}>Status</HomeCell>
+                    <HomeCell flex={0.3}>Action</HomeCell>
                 </HomeRow>
 
                 {list.map((item, index) => {
                     optionsRefs.current[index] = optionsRefs.current[index] || React.createRef();
                     return (
                         <HomeRow key={index}>
-                            <HomeCell flex={0.3} backgroundColor="#fff">{index + 1}</HomeCell>
-                            <HomeCell flex={1} backgroundColor="#fff">{item.Name}</HomeCell>
-                            <HomeCell flex={1} backgroundColor="#fff">{item.PhoneNumber}</HomeCell>
-                            <HomeCell flex={1} backgroundColor="#fff">{item.EmailID}</HomeCell>
-                            <HomeCell flex={0.4} backgroundColor="#fff">{item.Role_Type}</HomeCell>
-                            <HomeCell flex={0.3} backgroundColor="#fff">{item.status ? 'Active' : 'Inactive'} </HomeCell>
-                            <HomeCell flex={0.3} backgroundColor="#fff">
+                            <HomeCell flex={0.3}>{index + 1}</HomeCell>
+                            <HomeCell flex={1}>{item.Name}</HomeCell>
+                            <HomeCell flex={1}>{item.PhoneNumber}</HomeCell>
+                            <HomeCell flex={1}>{item.EmailID}</HomeCell>
+                            <HomeCell flex={0.4}>{item.Role_Type}</HomeCell>
+                            <HomeCell flex={0.3}>{item.status ? 'Active' : 'Inactive'} </HomeCell>
+                            <HomeCell flex={0.3}>
                                 <Button ref={optionsRefs.current[index]} onClick={() => toggleOptions(index, optionsRefs.current[index])}>{"..."}</Button>
                                 {selectedOptionIndex === index && (
                                     <OptionsWrapper style={{ top: optionPosition.top }}>
@@ -140,8 +140,6 @@ const HomeCell = styled.div`
   background-color: ${props => props.backgroundColor || '#fff'};
   padding-top: 5px;
   padding-bottom: 5px;
-  border-top-left-radius: ${props => props.borderTopLeftRadius || 0};
-  border-top-right-radius: ${props => props.borderTopRightRadius || 0};
 `;
 
 const Button = styled.button`

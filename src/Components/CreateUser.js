@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import { fetchPostData } from '../helper/helper';
+import { toast } from 'react-toastify';
+import Select from 'react-select';
 
 const roleLabels = [
     { id: 'WetherClients', title: 'Clients' },
@@ -28,12 +30,33 @@ const roleLabels = [
 function CreateUser(props) {
 
     const [formData, setFormData] = useState({
-        typeOfAdmin: '',
+        Role_Type: '',
         Name: '',
         PhoneNumber: '',
         EmailID: '',
-        Password: ''
+        Password: '',
+        Whether_All_Clients: false,
+        Designation: '',
+        Roles: '',
+        ClientID_Array: []
     });
+    const [selectedOption, setSelectedOption] = useState("")
+
+    const handleAllClientsCheckboxChange = (event) => {
+        const isChecked = event.target.checked;
+        setSelectedOption(isChecked ? options : []);
+        setFormData({
+            ...formData,
+            Whether_All_Clients: isChecked
+        });
+    };
+
+    const options = [
+        { value: "Spring", label: "Spring" },
+        { value: "Summer", label: "Summer" },
+        { value: "Autumn", label: "Autumn" },
+        { value: "Winter", label: "Winter" }
+    ];
 
     const handleInput = (key, value) => {
         setFormData({
@@ -46,26 +69,45 @@ function CreateUser(props) {
         e.preventDefault();
 
         const request = {
-            typeOfAdmin: formData.typeOfAdmin,
+            Role_Type: formData.Role_Type ? parseInt(formData.Role_Type) : formData.Role_Type,
             Name: formData.Name,
             PhoneNumber: formData.PhoneNumber,
             EmailID: formData.EmailID,
             Password: formData.Password,
-            Role: formData.Roles
+            Roles: formData.Roles,
+            Designation: formData.Designation,
+            Whether_All_Clients: formData.Whether_All_Clients,
+            ClientID_Array: selectedOption.map((item) => item.value)
         }
 
-        console.log('request ===>>> ', request)
+        const url = props.Selected_AdminID ? '/Update_Admin_Information' : '/Create_Admin_User';
 
-        const url = props.Selected_AdminID ? 'https://api.experteconsult.com/admin/Update_Admin_Information' : 'https://api.experteconsult.com/admin/Create_Admin_User';
-
-        axios.post(url, request)
+        fetchPostData(url, request)
             .then(response => {
-                console.log('Form data submitted successfully:', response.data);
+                if (response.success) {
+                    toast.success(response.extras.Status || 'Created Successfully')
+                    clearForm()
+                    setSelectedOption([]);
+                }
             })
             .catch(error => {
-                console.error('Error submitting form data:', error);
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
             });
     };
+
+    const clearForm = () => {
+        setFormData({
+            Role_Type: null,
+            Name: '',
+            PhoneNumber: '',
+            EmailID: '',
+            Password: '',
+            Whether_All_Clients: false,
+            Designation: '',
+            Roles: '',
+            ClientID_Array: []
+        });
+    }
 
     const Checkbox = ({ id, title }) => {
         if (!formData.Roles) {
@@ -94,20 +136,24 @@ function CreateUser(props) {
         );
     };
 
+    const handleSelet = (selectedOption) => {
+        setSelectedOption(selectedOption)
+    }
+
     return (
         <div>
             <FormContainer className="form-container">
                 <form onSubmit={handleSubmit}>
                     <FormGroup className="form-group">
-                        <FormLabel htmlFor="typeOfAdmin">Type of Admin:</FormLabel>
-                        <Select id="typeOfAdmin" name="typeOfAdmin" value={formData.typeOfAdmin} onChange={(e) => handleInput('typeOfAdmin', e.target.value)}>
+                        <FormLabel htmlFor="Role_Type">Type of Admin</FormLabel>
+                        <SelectInput id="Role_Type" name="Role_Type" value={formData.Role_Type} onChange={(e) => handleInput('Role_Type', e.target.value)}>
                             <option value="">Select an option</option>
-                            <option value='2'>Modular</option>
-                            <option value="3">Independent</option>
-                        </Select>
+                            <option value={2}>Modular</option>
+                            <option value={3}>Independent</option>
+                        </SelectInput>
                     </FormGroup>
                     <FormGroup className="form-group">
-                        <FormLabel htmlFor="Name">Name:</FormLabel>
+                        <FormLabel htmlFor="Name">Name</FormLabel>
                         <Input
                             type="text"
                             id="Name"
@@ -117,7 +163,35 @@ function CreateUser(props) {
                         />
                     </FormGroup>
                     <FormGroup className="form-group">
-                        <FormLabel htmlFor="PhoneNumber">Phone Number:</FormLabel>
+                        <FormLabel htmlFor="Designation">Designation</FormLabel>
+                        <Input
+                            type="text"
+                            id="Designation"
+                            name="Designation"
+                            value={formData.Designation}
+                            onChange={(e) => handleInput('Designation', e.target.value)}
+                        />
+                    </FormGroup>
+                    {formData.Role_Type === '2' &&
+                        <FormGroup className="form-group">
+                            <FormLabel htmlFor="Designation">Client
+                                <ClientCheckbox
+                                    type="checkbox"
+                                    checked={formData.Whether_All_Clients}
+                                    onChange={handleAllClientsCheckboxChange}
+                                />
+                                All Clients
+                            </FormLabel>
+                            <Select
+                                isMulti
+                                value={selectedOption}
+                                onChange={handleSelet}
+                                options={options}
+                            />
+                        </FormGroup>
+                    }
+                    <FormGroup className="form-group">
+                        <FormLabel htmlFor="PhoneNumber">Phone Number</FormLabel>
                         <Input
                             type="tel"
                             id="PhoneNumber"
@@ -127,7 +201,7 @@ function CreateUser(props) {
                         />
                     </FormGroup>
                     <FormGroup className="form-group">
-                        <FormLabel htmlFor="EmailID">Email Id:</FormLabel>
+                        <FormLabel htmlFor="EmailID">Email Id</FormLabel>
                         <Input
                             type="email"
                             id="EmailID"
@@ -137,7 +211,7 @@ function CreateUser(props) {
                         />
                     </FormGroup>
                     <FormGroup className="form-group">
-                        <FormLabel htmlFor="Password">Password:</FormLabel>
+                        <FormLabel htmlFor="Password">Password</FormLabel>
                         <Input
                             type="password"
                             id="Password"
@@ -146,7 +220,7 @@ function CreateUser(props) {
                             onChange={(e) => handleInput('Password', e.target.value)}
                         />
                     </FormGroup>
-                    {formData.typeOfAdmin === '2' &&
+                    {formData.Role_Type === '2' &&
                         <CheckboxContainer>
                             {roleLabels.map((item, index) => (
                                 <Checkbox key={index} id={item.id} title={item.title} />
@@ -170,17 +244,20 @@ const FormContainer = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  .css-13cymwt-control{
+    border-radius: 25px
+  }
 `;
 
 const FormGroup = styled.div`
   margin-bottom: 8px;
 `;
 
-const Label = styled.label`
-  align-self: flex-start;
-`;
+const ClientCheckbox = styled.input`
+    margin-left: 20px
+`
 
-const Select = styled.select`
+const SelectInput = styled.select`
     width: 100%;
     padding: 8px 10px;
     border: 1px solid #ccc;
@@ -189,7 +266,7 @@ const Select = styled.select`
 
 const Input = styled.input`
     width: 92%;
-    padding: 8px 10px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 25px;
 `;
