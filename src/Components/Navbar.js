@@ -6,30 +6,30 @@ import { TbLogout } from "react-icons/tb";
 
 const Navbar = () => {
 
-    const logOut = () => {
-        localStorage.removeItem("ProfileData")
-        window.location.href = "/"
-    }
+	const logOut = () => {
+		localStorage.removeItem("ProfileData")
+		window.location.href = "/"
+	}
 
-    return (
-        <NavbarContainer>
-            <Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
-            <NavItems>
-                <NavItem to="/">Home</NavItem>
-                <NavItem to="/client">Clients</NavItem>
-                <NavItem to="/banner">Banner</NavItem>
-                <NavItem to="/meeting">Meeting</NavItem>
-                <NavItem to="/payment">Payment</NavItem>
-                <NavItem to="/booking">Booking</NavItem>
-                <NavItem to="/documents">Documents</NavItem>
-                <NavItem to="/customers">Customers</NavItem>
-                <NavItem to="/contact">Contact Me</NavItem>
-                <NavItem to="/about">About Us</NavItem>
-                <div onClick={() => logOut()}><TbLogout style={{ color: "red", cursor: 'pointer' }} /></div>
-            </NavItems>
+	return (
+		<NavbarContainer>
+			<Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
+			<NavItems>
+				<NavItem to="/">Home</NavItem>
+				<NavItem to="/client">Clients</NavItem>
+				<NavItem to="/banner">Banner</NavItem>
+				<NavItem to="/meeting">Meeting</NavItem>
+				<NavItem to="/payment">Payment</NavItem>
+				<NavItem to="/booking">Booking</NavItem>
+				<NavItem to="/documents">Documents</NavItem>
+				<NavItem to="/customers">Customers</NavItem>
+				<NavItem to="/contact">Contact Me</NavItem>
+				<NavItem to="/about">About Us</NavItem>
+				<div onClick={() => logOut()}><TbLogout style={{ color: "red", cursor: 'pointer' }} /></div>
+			</NavItems>
 
-        </NavbarContainer>
-    );
+		</NavbarContainer>
+	);
 };
 
 const NavbarContainer = styled.div`

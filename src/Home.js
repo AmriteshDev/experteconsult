@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import CreateUser from './Components/CreateUser';
+import { fetchPostData } from './helper/helper';
 
 const Home = () => {
     const [list, setList] = useState([]);
@@ -19,19 +20,18 @@ const Home = () => {
 
     const getList = async () => {
         try {
-            let ProfileData = localStorage.getItem('ProfileData');
-            ProfileData = JSON.parse(ProfileData);
+            
             var request = {
-                AdminID: ProfileData.AdminID,
-                SessionID: ProfileData.SessionID,
                 Skip: 0,
                 Limit: 100,
                 Whether_Status_Filter: false,
                 Status: true,
                 Whether_Search_Filter: false,
             }
-            const response = await axios.post('https://api.experteconsult.com/admin/Fetch_All_Admin_Users', request);
-            setList(response.data.extras.Data);
+            const response = await fetchPostData('/Fetch_All_Admin_Users', request);
+            if (response.success) {
+                setList(response.extras.Data);
+            }
         } catch (error) {
             console.log('user fetching error ===>>> ', error.message)
         }
