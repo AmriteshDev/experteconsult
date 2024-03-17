@@ -1,89 +1,72 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import BasicInfo from './Components/BasicInfo';
-import Layout from './Components/Layout';
-import LayoutInputForm from './Components/LayoutInputForm';
-import Links from './Components/Links';
 import Payment from './Components/Payment';
-import BookingManagement from './Components/BookingManagement';
-import Priceing from './Components/Priceing';
+import MultiStep from 'react-multistep';
 import TermForm from './Components/TermForm';
+import LayoutInputForm from './Components/LayoutInputForm';
+import Layout from './Components/Layout';
+import Links from './Components/Links';
+import BookingManagement from './Components/BookingManagement';
+import Pricing from './Components/Pricing';
 
+
+
+const steps = [
+  { title: 'Basic Info', component: <BasicInfo /> },
+  { title: 'Layout', component: <Layout /> },
+  { title: 'Input', component: <LayoutInputForm /> },
+  { title: 'Links', component: <Links /> },
+  { title: 'Payment', component: <Payment /> },
+  { title: 'Booking', component: <BookingManagement /> },
+  { title: 'Pricing', component: <Pricing /> },
+  { title: 'Terms', component: <TermForm /> },
+  { title: 'Customers', component: <TermForm /> },
+  { title: 'About Us', component: <TermForm /> },
+  { title: 'Contact Us', component: <TermForm /> },
+
+];
 
 export default function Client() {
+  return (
+    <Container>
+      <ContentWrapper>
+        <LeftContainer>
+          <MultiStep
+            prevButton={{ title: 'Back', style: { background: 'red' } }}
+            nextButton={{ title: 'Next', style: { background: 'green' } }}
+            activeStep={1}
+            showNavigation={true}
+            steps={steps}
+          /> </LeftContainer>
+        {/* <RightContainer>
 
-    const [innerTab, setInnerTab] = useState(0)
-
-    const setTabValue = (value) => {
-        setInnerTab(value)
-    }
-
-    return (
-        <TabContainer>
-            <TabRow>
-                <SelectedTab onClick={() => { setInnerTab(0) }}>Basic Info</SelectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(1) }}>Layout</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(2) }}>Input</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(3) }}>Links</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(4) }}>Payment</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(5) }}>Bookings</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(6) }}>Pricing</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(7) }}>Terms</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(8) }}>Customers</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(9) }}>About Us</UnselectedTab>
-                <UnselectedTab onClick={() => { setInnerTab(10) }}>Contact Us</UnselectedTab>
-            </TabRow>
-            {innerTab === 0 && <BasicInfo setTab={setTabValue} />}
-            {innerTab === 1 && <Layout setTab={setTabValue} />}
-            {innerTab === 2 && <LayoutInputForm setTab={setTabValue} />}
-            {innerTab === 3 && <Links setTab={setTabValue} />}
-            {innerTab === 4 && <Payment setTab={setTabValue} />}
-            {innerTab === 5 && <BookingManagement setTab={setTabValue} />}
-            {innerTab === 6 && <Priceing setTab={setTabValue} />}
-            {innerTab === 7 && <TermForm />}
-            {innerTab === 8 && <TermForm />}
-            {innerTab === 9 && <TermForm />}
-            {innerTab === 10 && <TermForm />}
-        </TabContainer>
-    )
+          <p>Form Information</p>
+        </RightContainer> */}
+      </ContentWrapper>
+    </Container>
+  );
 }
 
-
-const TabContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const TabRow = styled.div`
-    flex-direction: row;
-    display: flex;
-    width: 95%;
-    align-self: center;
-    
-    margin-top: 3%;
-
+const ContentWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `;
 
-const SelectedTab = styled.div`
-    flex: 1;
-    align-items: center;
-    text-align: center;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    background-color: ${({ theme }) => theme.secondary};
-    color: ${({ theme }) => theme.white};
+const LeftContainer = styled.div`
+  flex: 1;
+  padding: 20px;
+  
 `;
 
-const UnselectedTab = styled.div`
-    align-items: center;
-    border-width: 0.5px;
-    padding-top: 5px;
-    opacity: 0.5;
-    padding-bottom: 5px;
-    border-style: solid;
-    flex: 1;
-    color: ${({ theme }) => theme.secondary};
-    background-color: ${({ theme }) => theme.gray};
+const RightContainer = styled.div`
+  flex: 1;
+  padding: 20px;
 `;
-

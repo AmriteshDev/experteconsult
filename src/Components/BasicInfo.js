@@ -1,111 +1,147 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
-
+import { fetchPostData } from '../helper/helper';
+import { toast } from 'react-toastify';
 
 export default function BasicInfo({ setTab }) {
+
+    const [formData, setFormData] = useState({
+        serialNo: '',
+        name: '',
+        phone: '',
+        email: '',
+        fbLink: '',
+        instaLink: '',
+        xLink: ''
+    });
+
+
+    const handleSave = (e) => {
+        e.preventDefault();
+
+        const request = {
+            serialNo: formData.serialNo,
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email,
+            fbLink: formData.fbLink,
+            instaLink: formData.instaLink,
+            xLink: formData.xLink,
+        }
+
+
+        const url = "/Fetch_Client_Complete_Information";
+
+        fetchPostData(url, request)
+            .then(response => {
+                if (response.success) {
+                    toast.success(response.extras.Status || 'Added Successfully')
+
+                }
+            })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+            });
+    };
     return (
         <Container>
             <Title>Basic Info</Title>
             <FormContainer>
                 <Column>
-                    <Row>
-                        <Label>S.No:</Label>
-                        <InputField placeholder="Serial No" />
-                    </Row>
-                    <Row>
-                        <Label>Name</Label>
-                        <InputField placeholder="Enter Your Name" />
-                    </Row>
-                    <Row>
-                        <Label>Phone</Label>
-                        <InputField placeholder="Enter Your Phone" />
-                    </Row>
-                    <Row>
-                        <Label>Email</Label>
-                        <InputField placeholder="Enter Your Email Id" />
-                    </Row>
+                    <FormGroup>
+                        <Label htmlFor="serialNo">S.No:</Label>
+                        <InputField id="serialNo" name='serialNo' placeholder="Serial No" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="name">Name:</Label>
+                        <InputField id="name" name='name' placeholder="Enter Your Name" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="phone">Phone:</Label>
+                        <InputField id="phone" name='phone' placeholder="Enter Your Phone" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="email">Email:</Label>
+                        <InputField id="email" name='email' placeholder="Enter Your Email Id" />
+                    </FormGroup>
                 </Column>
                 <Column>
-                    <Row>
-                        <Label>FB Link</Label>
-                        <InputField placeholder="facebook.com" />
-                    </Row>
-                    <Row>
-                        <Label>Insta Link</Label>
-                        <InputField placeholder="instagram.com" />
-                    </Row>
-                    <Row>
-                        <Label>X Link</Label>
-                        <InputField placeholder="x.com" />
-                    </Row>
+                    <FormGroup>
+                        <Label htmlFor="fbLink">FB Link:</Label>
+                        <InputField id="fbLink" name='fbLink' placeholder="facebook.com" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="instaLink">Insta Link:</Label>
+                        <InputField id="instaLink" name='instaLink' placeholder="instagram.com" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="xLink">X Link:</Label>
+                        <InputField id="xLink" name='xLink' placeholder="x.com" />
+                    </FormGroup>
                 </Column>
             </FormContainer>
-            <Button onClick={() => { setTab(1) }}>Save</Button>
+            <Button onClick={handleSave}>Save</Button>
         </Container>
     )
 }
 
 const Container = styled.div`
-  width: 95%;
-  margin: 20px auto; /* Adjusting margin */
-  align-items: center;
-  flex-direction: column;
-  display: flex;
+    width: 95%;
+    margin: 20px auto;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
 
 const Title = styled.h1`
-  color: ${colors.black};
+    color: ${colors.black};
 `;
 
 const FormContainer = styled.div`
-  display: flex;
-  width: 80%;
-  margin-top: 3%;
+    display: flex;
+    width: 100%;
+    margin-top: 20px;
 `;
 
 const Column = styled.div`
-  flex: 1;
-  margin: 0 5%; /* Adjusting margin */
-  display: flex;
-  flex-direction: column;
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
 `;
 
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px; /* Adjusting margin */
+const FormGroup = styled.div`
+    margin-bottom: 20px;
 `;
 
-const Label = styled.span`
-  flex: 1;
-  text-align: left;
-  color: ${colors.black}; /* Setting text color */
+const Label = styled.label`
+    text-align: left;
+    color: ${colors.black};
 `;
 
 const InputField = styled.input`
-    flex: 1;
-    border: 1px solid ${colors.gray}; 
-    border-width: 1px;
-    border-style: solid;
-    margin-left: 10px;
-    border-color: rgb(193, 193, 193);
     width: 100%;
-    padding: 8px;
+    padding: 10px;
+    border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
 `;
 
 const Button = styled.button`
-        background-color: ${colors.primary};
-        color: ${colors.white};
-        max-width: 150px;
-        margin-top: 30px;
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    max-width: 150px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
 `;

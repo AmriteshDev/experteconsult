@@ -2,9 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
 
-
 const LayoutInputForm = ({ setTab }) => {
-
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [profilePicture, setProfilePicture] = useState(null);
     const [companyLogo, setCompanyLogo] = useState(null);
@@ -20,6 +18,7 @@ const LayoutInputForm = ({ setTab }) => {
         // Example: const formData = new FormData(); formData.append('backgroundImage', backgroundImage);
         // Send formData to your backend.
     };
+
     return (
         <Container>
             <Title>Layout Input</Title>
@@ -78,69 +77,81 @@ const LayoutInputForm = ({ setTab }) => {
     );
 };
 
-export default LayoutInputForm;
-
 const Container = styled.div`
-  width: 95%;
-  align-self: center;
-  margin-top: 20px;
-  align-items: center;
-  flex-direction: column;
-  display: flex;
+    width: 95%;
+    align-self: center;
+    margin-top: 20px;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    background-color: #f5f5f5;
+
+    padding: 20px; /* Added padding */
+    border-radius: 10px; /* Added border radius */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added box shadow */
 `;
 
 const Title = styled.h1`
-  color: ${colors.black};
+    color: ${colors.black};
 `;
 
 const FormContainer = styled.div`
-  flex-direction: row;
-  display: flex;
-  width: 80%;
-  margin-top: 3%;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-
- `;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+`;
 
 const InputContainer = styled.div`
-display: flex;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
 `;
 
 const Label = styled.label`
-  flex: 1;
-  text-align: left;
-  display: block;
+    color: ${colors.black};
     margin-bottom: 5px;
-    align-self: flex-start;
 `;
 
 const Input = styled.input`
-width: 100%;
-padding: 8px;
-border: 1px solid #ccc;
-border-radius: 4px;
-box-sizing: border-box;
-font-size: 14px;
+    padding: 8px;
+    border: 1px solid ${colors.gray};
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    /* Additional styles to mimic text input */
+    background-color: white; /* Background color */
+    color: ${colors.black}; /* Text color */
+    cursor: pointer; /* Change cursor on hover */
+    /* Additional styles for file input */
+    &:focus {
+        outline: none; /* Remove default focus outline */
+        border-color: ${colors.primary}; /* Change border color on focus */
+    }
+    /* Additional styles for file input */
+    &:hover {
+        border-color: ${colors.primary}; /* Change border color on hover */
+    }
 `;
 
 const Textarea = styled.textarea`
-  flex: 1;
-  min-height: 4em;
+    padding: 8px;
+    border: 1px solid ${colors.gray};
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    resize: vertical;
 `;
 
 const Button = styled.button`
     background-color: ${colors.primary};
-    max-width: 150px;
-    margin-top: 30px;
-    width: 100%;
+    color: ${colors.white};
     padding: 10px;
     border: none;
     border-radius: 4px;
@@ -149,15 +160,21 @@ const Button = styled.button`
 `;
 
 const PreviewImage = styled.img`
-  /* Add any styles for image previews here */
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
 `;
 
 const PreviewVideo = styled.video`
-  /* Add any styles for video previews here */
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
 `;
 
 const RedBox = styled.div`
-  background-color: red;
-  width: 40%;
-  height: 300px;
+    background-color: red;
+    width: 40%;
+    height: 300px;
 `;
+
+export default LayoutInputForm;
