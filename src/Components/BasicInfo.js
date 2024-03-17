@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
 import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
 
-export default function BasicInfo({ setTab }) {
-
-
-    var selectedClientData = localStorage.getItem("selectedClientData");
-    selectedClientData = JSON.parse(selectedClientData);
-    console.log("selectedClientData-------", selectedClientData)
-
+export default function BasicInfo({selectedClientData}) {
+   
     const [formData, setFormData] = useState({
-        serialNo: selectedClientData?.serialNo ? selectedClientData.serialNo : '',
-        name: selectedClientData?.name ? selectedClientData.name : '',
-        phone: selectedClientData?.PhoneNumber ? selectedClientData.PhoneNumber : '',
-        email: selectedClientData?.EmailID ? selectedClientData.EmailID : '',
-        fbLink: selectedClientData?.Facebook_Link ? selectedClientData.Facebook_Link : '',
-        instaLink: selectedClientData?.Instagram_Link ? selectedClientData.Instagram_Link : '',
-        xLink: selectedClientData?.xLink ? selectedClientData.xLink : '',
+        Client_Code: selectedClientData.Client_Code || '',
+        Name: selectedClientData.Name || '',
+        PhoneNumber: selectedClientData.PhoneNumber || '',
+        EmailID: selectedClientData.EmailID || '',
+        Facebook_Link: selectedClientData.Facebook_Link || '',
+        Instagram_Link: selectedClientData.Instagram_Link || '',
+        Twitter_Link: selectedClientData.Twitter_Link || '',
         ClientID: selectedClientData.ClientID,
+        Plan_Type: selectedClientData.Plan_Type,
+        Plan_Price: selectedClientData.Plan_Price,
+        Discount: selectedClientData.Discount,
     });
 
     const handleForm = (key, value) => {
@@ -33,24 +31,25 @@ export default function BasicInfo({ setTab }) {
         e.preventDefault();
 
         const request = {
-            serialNo: formData.serialNo,
-            name: formData.name,
-            phone: formData.phone,
-            email: formData.email,
-            fbLink: formData.fbLink,
-            instaLink: formData.instaLink,
-            xLink: formData.xLink,
+            Client_Code: formData.Client_Code,
+            Name: formData.Name,
+            PhoneNumber: formData.PhoneNumber,
+            EmailID: formData.EmailID,
+            Facebook_Link: formData.Facebook_Link,
+            Instagram_Link: formData.Instagram_Link,
+            Twitter_Link: formData.Twitter_Link,
             ClientID: formData.ClientID,
+            Plan_Type: formData.Plan_Type,
+            Plan_Price: formData.Plan_Price,
+            Discount: formData.Discount,
         }
 
-
-        const url = "/Fetch_Client_Complete_Information";
-
-        fetchPostData(url, request)
+        fetchPostData('/Update_Client_Basic_Information', request)
             .then(response => {
                 if (response.success) {
+                    const updatedData = {...selectedClientData, ...request}
+                    localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
                     toast.success(response.extras.Status || 'Added Successfully')
-
                 }
             })
             .catch(error => {
@@ -63,34 +62,34 @@ export default function BasicInfo({ setTab }) {
             <FormContainer>
                 <Column>
                     <FormGroup>
-                        <Label htmlFor="serialNo">S.No:</Label>
-                        <InputField id="serialNo" onChange={(e) => handleForm("serialNo", e.target.value)} name='serialNo' placeholder="Serial No" />
+                        <Label htmlFor="Client_Code">S.No</Label>
+                        <InputField id="Client_Code" value={formData.Client_Code} onChange={(e) => handleForm("Client_Code", e.target.value)} name='Client_Code' placeholder="Serial No" />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="name">Name:</Label>
-                        <InputField id="name" name='name' onChange={(e) => handleForm("name", e.target.value)} placeholder="Enter Your Name" />
+                        <Label htmlFor="Name">Name</Label>
+                        <InputField id="Name" name='Name' value={formData.Name} onChange={(e) => handleForm("Name", e.target.value)} placeholder="Enter Your Name" />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="phone">Phone:</Label>
-                        <InputField id="phone" name='phone' onChange={(e) => handleForm("phone", e.target.value)} placeholder="Enter Your Phone" />
+                        <Label htmlFor="PhoneNumber">Phone</Label>
+                        <InputField id="PhoneNumber" name='PhoneNumber' value={formData.PhoneNumber} onChange={(e) => handleForm("PhoneNumber", e.target.value)} placeholder="Enter Your Phone" />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="email">Email:</Label>
-                        <InputField id="email" name='email' onChange={(e) => handleForm("email", e.target.value)} placeholder="Enter Your Email Id" />
+                        <Label htmlFor="EmailID">Email</Label>
+                        <InputField id="EmailID" name='EmailID' value={formData.EmailID} onChange={(e) => handleForm("EmailID", e.target.value)} placeholder="Enter Your Email Id" />
                     </FormGroup>
                 </Column>
                 <Column>
                     <FormGroup>
-                        <Label htmlFor="fbLink">FB Link:</Label>
-                        <InputField id="fbLink" name='fbLink' onChange={(e) => handleForm("fbLink", e.target.value)} placeholder="facebook.com" />
+                        <Label htmlFor="Facebook_Link">FB Link</Label>
+                        <InputField id="Facebook_Link" name='Facebook_Link' value={formData.Facebook_Link} onChange={(e) => handleForm("Facebook_Link", e.target.value)} placeholder="facebook.com" />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="instaLink">Insta Link:</Label>
-                        <InputField id="instaLink" name='instaLink' onChange={(e) => handleForm("instaLink", e.target.value)} placeholder="instagram.com" />
+                        <Label htmlFor="Instagram_Link">Insta Link</Label>
+                        <InputField id="Instagram_Link" name='Instagram_Link' value={formData.Instagram_Link} onChange={(e) => handleForm("Instagram_Link", e.target.value)} placeholder="instagram.com" />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="xLink">X Link:</Label>
-                        <InputField id="xLink" name='xLink' onChange={(e) => handleForm("xLink", e.target.value)} placeholder="x.com" />
+                        <Label htmlFor="Twitter_Link">X Link</Label>
+                        <InputField id="Twitter_Link" name='Twitter_Link' value={formData.Twitter_Link} onChange={(e) => handleForm("Twitter_Link", e.target.value)} placeholder="x.com" />
                     </FormGroup>
                 </Column>
             </FormContainer>
