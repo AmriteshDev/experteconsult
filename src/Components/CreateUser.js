@@ -41,6 +41,11 @@ function CreateUser(props) {
         ClientID_Array: []
     });
     const [selectedOption, setSelectedOption] = useState("")
+    const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+        getClentData()
+    },[])
 
     const handleAllClientsCheckboxChange = (event) => {
         const isChecked = event.target.checked;
@@ -51,12 +56,34 @@ function CreateUser(props) {
         });
     };
 
-    const options = [
-        { value: "Spring", label: "Spring" },
-        { value: "Summer", label: "Summer" },
-        { value: "Autumn", label: "Autumn" },
-        { value: "Winter", label: "Winter" }
-    ];
+    const getClentData = () => {
+        const request = {
+            "Skip": 0,
+            "Limit": 10,
+            "Whether_Status_Filter": false,
+            "Status": false,
+            "Whether_Search_Filter": false,
+            "Search": ""
+        }
+
+        fetchPostData('/Filter_All_Clients', request)
+            .then(response => {
+                if (response.success && response?.extras?.Data) {
+                    let optionData = response?.extras?.Data;
+                    const mappedOptions = optionData.map(item => ({
+                        value: item.Client_Code,
+                        label: item.EmailID
+                    }));
+                    setOptions(mappedOptions);
+                } else {
+                    toast.error(response?.extras?.msg || 'No client data found');
+                }
+            })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'Something went wrong');
+            });
+
+    }
 
     const handleInput = (key, value) => {
         setFormData({
@@ -80,6 +107,8 @@ function CreateUser(props) {
         }
         if (formData.Role_Type === "2") {
             request.ClientID_Array = selectedOption?.map((item) => item.value)
+        } else {
+            request.ClientID_Array = ['test']
         }
 
         const url = props.Selected_AdminID ? '/Update_Admin_Information' : '/Create_Admin_User';
