@@ -6,16 +6,28 @@ import { toast } from 'react-toastify';
 
 export default function BasicInfo({ setTab }) {
 
+
+    var selectedClientData = localStorage.getItem("selectedClientData");
+    selectedClientData = JSON.parse(selectedClientData);
+    console.log("selectedClientData-------", selectedClientData)
+
     const [formData, setFormData] = useState({
-        serialNo: '',
-        name: '',
-        phone: '',
-        email: '',
-        fbLink: '',
-        instaLink: '',
-        xLink: ''
+        serialNo: selectedClientData?.serialNo ? selectedClientData.serialNo : '',
+        name: selectedClientData?.name ? selectedClientData.name : '',
+        phone: selectedClientData?.PhoneNumber ? selectedClientData.PhoneNumber : '',
+        email: selectedClientData?.EmailID ? selectedClientData.EmailID : '',
+        fbLink: selectedClientData?.Facebook_Link ? selectedClientData.Facebook_Link : '',
+        instaLink: selectedClientData?.Instagram_Link ? selectedClientData.Instagram_Link : '',
+        xLink: selectedClientData?.xLink ? selectedClientData.xLink : '',
+        ClientID: selectedClientData.ClientID,
     });
 
+    const handleForm = (key, value) => {
+        setFormData({
+            ...formData,
+            [key]: value
+        })
+    }
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -28,6 +40,7 @@ export default function BasicInfo({ setTab }) {
             fbLink: formData.fbLink,
             instaLink: formData.instaLink,
             xLink: formData.xLink,
+            ClientID: formData.ClientID,
         }
 
 
@@ -51,33 +64,33 @@ export default function BasicInfo({ setTab }) {
                 <Column>
                     <FormGroup>
                         <Label htmlFor="serialNo">S.No:</Label>
-                        <InputField id="serialNo" name='serialNo' placeholder="Serial No" />
+                        <InputField id="serialNo" onChange={(e) => handleForm("serialNo", e.target.value)} name='serialNo' placeholder="Serial No" />
                     </FormGroup>
                     <FormGroup>
                         <Label htmlFor="name">Name:</Label>
-                        <InputField id="name" name='name' placeholder="Enter Your Name" />
+                        <InputField id="name" name='name' onChange={(e) => handleForm("name", e.target.value)} placeholder="Enter Your Name" />
                     </FormGroup>
                     <FormGroup>
                         <Label htmlFor="phone">Phone:</Label>
-                        <InputField id="phone" name='phone' placeholder="Enter Your Phone" />
+                        <InputField id="phone" name='phone' onChange={(e) => handleForm("phone", e.target.value)} placeholder="Enter Your Phone" />
                     </FormGroup>
                     <FormGroup>
                         <Label htmlFor="email">Email:</Label>
-                        <InputField id="email" name='email' placeholder="Enter Your Email Id" />
+                        <InputField id="email" name='email' onChange={(e) => handleForm("email", e.target.value)} placeholder="Enter Your Email Id" />
                     </FormGroup>
                 </Column>
                 <Column>
                     <FormGroup>
                         <Label htmlFor="fbLink">FB Link:</Label>
-                        <InputField id="fbLink" name='fbLink' placeholder="facebook.com" />
+                        <InputField id="fbLink" name='fbLink' onChange={(e) => handleForm("fbLink", e.target.value)} placeholder="facebook.com" />
                     </FormGroup>
                     <FormGroup>
                         <Label htmlFor="instaLink">Insta Link:</Label>
-                        <InputField id="instaLink" name='instaLink' placeholder="instagram.com" />
+                        <InputField id="instaLink" name='instaLink' onChange={(e) => handleForm("instaLink", e.target.value)} placeholder="instagram.com" />
                     </FormGroup>
                     <FormGroup>
                         <Label htmlFor="xLink">X Link:</Label>
-                        <InputField id="xLink" name='xLink' placeholder="x.com" />
+                        <InputField id="xLink" name='xLink' onChange={(e) => handleForm("xLink", e.target.value)} placeholder="x.com" />
                     </FormGroup>
                 </Column>
             </FormContainer>
