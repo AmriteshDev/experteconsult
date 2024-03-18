@@ -33,7 +33,7 @@ export default function Client() {
       <ContentWrapper>
         <LeftContainer>
           <MultiStep
-            prevButton={{ title: 'Back', style: { background: 'red' } }}
+            prevButton={{ title: 'Back', style: { background: 'red' }  }}
             nextButton={{ title: 'Next', style: { background: 'green' } }}
             activeStep={1}
             showNavigation={true}

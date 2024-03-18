@@ -18,11 +18,10 @@ const Navbar = () => {
 
   const handleClientSelect = (client) => {
     setSelectedClient(client);
+    localStorage.setItem("selectedClientData", client)
     if (client) {
-      localStorage.setItem("selectedClientData", client)
       navigate('/client')
     } else {
-      localStorage.setItem("selectedClientData", null)
       navigate('')
     }
   };
