@@ -1,39 +1,64 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
+import { fetchPostData } from '../helper/helper';
+import { toast } from 'react-toastify';
 
-export default function Links({ setTab }) {
+
+export default function Links({ selectedClientData }) {
     const [formData, setFormData] = useState({
-        dropdown: '',
         serialNumber: '',
-        name: '',
+        name: selectedClientData.Name || '',
+        ClientID: selectedClientData.ClientID || '',
+        Zoom_Meet_Link: selectedClientData.Zoom_Meet_Link || '',
+        Google_Meet_Link: selectedClientData.Google_Meet_Link || '',
+
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const [selectedLink, setSelctedLink] = useState("");
+
+    const handleLinkSelection = (link) => {
+        setSelctedLink(link)
+    };
+    const handleChange = (key, value) => {
+
         setFormData({
             ...formData,
-            [name]: value,
-        });
-    };
+            [key]: value
+        })
 
-    const handleSubmit = (e) => {
+
+    }
+    const handleSave = (e) => {
         e.preventDefault();
-        // Perform any actions with the form data here
-        console.log('Form data submitted:', formData);
+
+        const request = {
+            ClientID: formData.ClientID,
+            Zoom_Meet_Link: formData.Zoom_Meet_Link,
+            Google_Meet_Link: formData.Google_Meet_Link,
+        }
+
+        fetchPostData("/Update_Client_Meeting_Links", request)
+            .then(response => {
+                const updatedData = { ...selectedClientData, ...request }
+                localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
+                toast.success(response.extras.Status || 'Added Successfully')
+            }).catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+            })
     };
 
     return (
         <Container>
             <Title>Meeting Links</Title>
-            <FormContainer onSubmit={handleSubmit}>
+            <FormContainer onSubmit={handleSave}>
                 <FormGroup>
                     <Label htmlFor="dropdown">Meeting links:</Label>
                     <Select
                         id="dropdown"
                         name="dropdown"
-                        value={formData.dropdown}
-                        onChange={handleChange}
+                        value={selectedLink}
+                        onChange={(e) => handleLinkSelection(e.target.value)}
                     >
                         <option value="">Select an option</option>
                         <option value="Modular">Zoom meets</option>
@@ -47,7 +72,7 @@ export default function Links({ setTab }) {
                         id="serialNumber"
                         name="serialNumber"
                         value={formData.serialNumber}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange("serialNumber", e.target.value)}
                     />
                 </FormGroup>
                 <FormGroup>
@@ -57,10 +82,10 @@ export default function Links({ setTab }) {
                         id="name"
                         name="name"
                         value={formData.name}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange("name", e.target.value)}
                     />
                 </FormGroup>
-                <Button onClick={() => { setTab(4) }}>Save</Button>
+                <Button >Save</Button>
             </FormContainer>
         </Container>
     );

@@ -1,7 +1,80 @@
 import styled from 'styled-components';
-import colors from './colors'; // Importing colors from the colors.js file
+import colors from './colors';
+import { useState } from 'react';
+import { fetchPostData } from '../helper/helper';
+import { toast } from 'react-toastify';
 
-// Styled components for Pricing
+
+const Pricing = ({ setTab }) => {
+
+    const [formData, setFormData] = useState({
+        lable1: "",
+        price: "",
+        lable2: "",
+        offerPrice: "",
+
+    })
+
+    const handleForm = (key, value) => {
+        setFormData({
+            ...formData,
+            [key]: value
+        })
+    }
+
+    const handleSave = (e) => {
+        e.preventDefault();
+
+        const request = {
+            price: formData.price,
+            lable1: formData.lable1,
+            lable2: formData.lable2,
+            offerPrice: formData.offerPrice,
+        };
+
+        fetchPostData('/Create_Client_Booking_Management', request)
+            .then(response => {
+                if (response.success) {
+                    toast.success(response.extras.Status || 'Added Successfully');
+                    console.log("request===>", response)
+                }
+            })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+            });
+    };
+
+    return (
+        <Container>
+            <FormContainer>
+                <Title>Pricing</Title>
+
+                <FormGroup>
+                    <Label htmlFor="label1">Label 1:</Label>
+                    <Input id="label1" name="lable1" value={formData.lable1} onChange={(e) => handleForm("lable1", e.target.value)} type="text" placeholder="Label 1" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="price">Price:</Label>
+                    <Input id="price" name='price' value={formData.price} onChange={(e) => handleForm("price", e.target.value)} type="number" placeholder="00.0" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="label2">Label 2:</Label>
+                    <Input id="label2" name="lable2" value={formData.lable2} onChange={(e) => handleForm("lable2", e.target.value)} type="text" placeholder="Label 2" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="offerPrice">Offer Price:</Label>
+                    <Input id="offerPrice" name='offerPrice' value={formData.offerPrice} onChange={(e) => handleForm("offerPrice", e.target.value)} type="number" placeholder="00" />
+                </FormGroup>
+                <Button onClick={handleSave}>Save</Button>
+            </FormContainer>
+        </Container>
+    );
+};
+
+export default Pricing;
+
+
+
 const Container = styled.div`
     width: 95%;
     margin: 20px auto;
@@ -68,34 +141,3 @@ const Button = styled.button`
     cursor: pointer;
     font-size: 16px; /* Adjust font size */
 `;
-
-const Pricing = ({ setTab }) => {
-
-    return (
-        <Container>
-            <FormContainer>
-                <Title>Pricing</Title>
-
-                <FormGroup>
-                    <Label htmlFor="label1">Label 1:</Label>
-                    <Input id="label1" type="text" placeholder="Label 1" />
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor="price">Price:</Label>
-                    <Input id="price" type="text" placeholder="00.0" />
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor="label2">Label 2:</Label>
-                    <Input id="label2" type="text" placeholder="Label 2" />
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor="offerPrice">Offer Price:</Label>
-                    <Input id="offerPrice" type="text" placeholder="00" />
-                </FormGroup>
-                <Button onClick={() => { setTab(7) }}>Save</Button>
-            </FormContainer>
-        </Container>
-    );
-};
-
-export default Pricing;

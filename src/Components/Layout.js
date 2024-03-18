@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 const data = [1, 2];
 
 export default function Layout({ selectedClientData }) {
-  const [selectedLayout, setSelectedLayout] = useState(selectedClientData.Layout_Type || 1); // State to keep track of the selected layout
+  const [selectedLayout, setSelectedLayout] = useState(selectedClientData.Layout_Type || 1);
 
   const handleLayoutChange = (item) => {
     setSelectedLayout(item);

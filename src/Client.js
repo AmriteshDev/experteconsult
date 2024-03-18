@@ -37,8 +37,28 @@ export default function Client() {
       <ContentWrapper>
         <LeftContainer>
           <MultiStep
-            prevButton={{ title: 'Back', style: { background: 'red' }  }}
-            nextButton={{ title: 'Next', style: { background: 'green' } }}
+            prevButton={{
+              title: 'Back', style: {
+                background: "#cd3b3bed",
+                position: "absolute",
+                left: "30px",
+                padding: "10px 24px",
+                fontSize: "15px",
+                color: "white",
+
+
+              }
+            }}
+            nextButton={{
+              title: 'Next', style: {
+                background: '#08c3ff',
+                position: "absolute",
+                right: "30px",
+                padding: "10px 24px",
+                fontSize: "15px",
+                color: "white"
+              }
+            }}
             activeStep={0}
             showNavigation={true}
             steps={steps}
@@ -83,6 +103,12 @@ const LeftContainer = styled.div`
   }
   .go433304200:before{
     margin-top: 3px;
+  }
+  .button{
+    background: red;
+    position: absolute;
+    right: 0px;
+
   }
 `;
 

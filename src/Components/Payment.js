@@ -1,40 +1,60 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
+import { fetchPostData } from '../helper/helper';
+import { toast } from 'react-toastify';
 
-export default function Payment({ setTab }) {
+export default function Payment({ selectedClientData }) {
     const [formData, setFormData] = useState({
         dropdown: '',
         serialNumber: '',
         name: '',
+        ClientID: selectedClientData.ClientID,
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleChange = (key, value) => {
         setFormData({
             ...formData,
-            [name]: value,
+            [key]: value
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSave = (e) => {
         e.preventDefault();
-        // Perform any actions with the form data here
-        console.log('Form data submitted:', formData);
+
+        const request = {
+            Client_Code: formData.Client_Code,
+            dropdown: formData.dropdown,
+            serialNumber: formData.serialNumber,
+            name: formData.name,
+
+        }
+
+        fetchPostData('/Update_Client_Basic_Information', request)
+            .then(response => {
+                if (response.success) {
+                    const updatedData = { ...selectedClientData, ...request }
+                    localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
+                    toast.success(response.extras.Status || 'Added Successfully')
+                }
+            })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+            });
     };
 
     return (
         <Container>
             <Title>Payment Gateway</Title>
             <FormContainer>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={handleSave}>
                     <FormGroup>
                         <Label htmlFor="dropdown">Payment Gateway:</Label>
                         <Select
                             id="dropdown"
                             name="dropdown"
                             value={formData.dropdown}
-                            onChange={handleChange}
+                            onChange={(e) => handleChange("dropdown", e.target.value)}
                         >
                             <option value="">Select an option</option>
                             <option value="phonepay">PhonePay</option>
@@ -48,7 +68,7 @@ export default function Payment({ setTab }) {
                             id="serialNumber"
                             name="serialNumber"
                             value={formData.serialNumber}
-                            onChange={handleChange}
+                            onChange={(e) => handleChange("serialNumber", e.target.value)}
                         />
                     </FormGroup>
                     <FormGroup>
@@ -58,10 +78,10 @@ export default function Payment({ setTab }) {
                             id="name"
                             name="name"
                             value={formData.name}
-                            onChange={handleChange}
+                            onChange={(e) => handleChange("name", e.target.value)}
                         />
                     </FormGroup>
-                    <Button onClick={() => { setTab(5) }}>Save</Button>
+                    <Button >Save</Button>
                 </Form>
             </FormContainer>
         </Container>

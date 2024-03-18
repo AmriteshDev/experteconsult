@@ -1,7 +1,154 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useState } from 'react';
 import Modal from 'react-modal';
 import colors from './colors';
+import { toast } from 'react-toastify';
+import { fetchPostData } from '../helper/helper';
+
+const BookingManagement = ({ selectedClientData }) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');
+  const [createBookingFormData, setCreateBookingFormData] = useState({
+    Title: "",
+    Description: "",
+    ClientID: selectedClientData.ClientID,
+  });
+
+  const bookingDetails = ["Id", "Name", "Phone", "Email", "Status", "Type"];
+  const openPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const handleBooking = (key, value) => {
+    setCreateBookingFormData({
+      ...createBookingFormData,
+      [key]: value
+    });
+  };
+
+  const handleOptionChange = (value) => {
+    setSelectedOption(value);
+  };
+
+  const handleCreateBooking = (e) => {
+    e.preventDefault();
+
+    const request = {
+      Title: createBookingFormData.Title,
+      Description: createBookingFormData.Description,
+      ClientID: createBookingFormData.ClientID,
+    };
+
+    fetchPostData('/Create_Client_Booking_Management', request)
+      .then(response => {
+        if (response.success) {
+          toast.success(response.extras.Status || 'Added Successfully');
+          console.log("request===>", response)
+        }
+      })
+      .catch(error => {
+        toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+      });
+  };
+
+
+
+  const options = [{ value: 'option1', title: 'Option 1', description: 'Description for Option 1' }, { value: 'option2', title: 'Option 2', description: 'Description for Option 2' }];
+
+  return (
+    <Container>
+      <MaxWidthPopup isOpen={isPopupOpen} onClose={closePopup}>
+        <SectionContainer>
+          <Title>Create Booking</Title>
+          <InputContainer>
+            <label>Title:</label>
+            <TextInput name="Title" onChange={(e) => handleBooking("Title", e.target.value)} value={createBookingFormData.Title} placeholder="Enter Title" />
+          </InputContainer>
+          <InputContainer>
+            <label>Description:</label>
+            <TextArea name='Description' onChange={(e) => handleBooking("Description", e.target.value)} value={createBookingFormData.Description} placeholder="Enter Your Description" rows={3} />
+          </InputContainer>
+          <h4>When You are available for this booking?</h4>
+          <RadioButtonContainer>
+            {options.map((option) => (
+              <RadioButtonLabel key={option.value}>
+                <RadioButton
+                  type="radio"
+                  value={option.value}
+                  checked={selectedOption === option.value}
+                  onChange={() => handleOptionChange(option.value)}
+                />
+                {option.title} - {option.description}
+              </RadioButtonLabel>
+            ))}
+          </RadioButtonContainer>
+          <div>
+            <Button onClick={handleCreateBooking}>Create Booking</Button>
+            <StyledCancelButton onClick={closePopup}>Cancel</StyledCancelButton>
+          </div>
+        </SectionContainer>
+      </MaxWidthPopup>
+
+      <Title>Booking Management</Title>
+      <TableContainer>
+        <TableRow>
+          <TableHeaderCell flex={0.3} borderRadius="top-left"><Text>S.no</Text></TableHeaderCell>
+          <TableHeaderCell flex={0.4}><Text>Id</Text></TableHeaderCell>
+          <TableHeaderCell flex={1}><Text>Name</Text></TableHeaderCell>
+          <TableHeaderCell flex={1}><Text>Phone</Text></TableHeaderCell>
+          <TableHeaderCell flex={1}><Text>Email</Text></TableHeaderCell>
+          <TableHeaderCell flex={0.4}><Text>Type</Text></TableHeaderCell>
+          <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Status</Text></TableHeaderCell>
+        </TableRow>
+        {/* {
+          bookingDetails && bookingDetails.map((item, index) => (
+            <div key={index}>
+              <div>{item.index + 1}</div>
+              <div>{item.Id}</div>
+              <div>{item.Name}</div>
+              <div>{item.Phone}</div>
+              <div>{item.Email}</div>
+              <div>{item.Type}</div>
+              <div>{item.Status}</div>
+            </div>
+          ))
+        } */}
+        <TableFooter />
+      </TableContainer>
+
+      <Button onClick={openPopup}>Create Booking</Button>
+    </Container>
+  );
+};
+
+export default BookingManagement;
+
+// Styled Components definitions...
+
+
+const MaxWidthPopup = ({ isOpen, onClose, children }) => {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      shouldCloseOnOverlayClick={false}
+      contentLabel="Max Width Popup"
+      style={{
+        content: {
+          maxWidth: '80%',
+          margin: 'auto',
+          backgroundColor: '#f7f7f7',
+        },
+      }}
+    >
+      {children}
+    </Modal>
+  );
+};
 
 
 
@@ -56,16 +203,6 @@ const Button = styled.button`
     font-size: 16px;
     max-width: 150px;
     margin-top: 30px;
-`;
-
-const MaxWidthPopup = styled(Modal)`
-  .content {
-    max-width: 90%;
-    margin: auto;
-    background-color: ${colors.white};
-    border-radius: 8px;
-    padding: 20px;
-  }
 `;
 
 const SectionContainer = styled.div`
@@ -125,95 +262,3 @@ const StyledCancelButton = styled(Button)`
     background-color: ${colors.redDark};
   }
 `;
-const BookingManagement = () => {
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('');
-
-    const openPopup = () => {
-        setIsPopupOpen(true);
-    };
-
-    const closePopup = () => {
-        setIsPopupOpen(false);
-    };
-
-    const handleOptionChange = (value) => {
-        setSelectedOption(value);
-    };
-
-    const options = [{ value: 'option1', title: 'Option 1', description: 'Description for Option 1' }, { value: 'option2', title: 'Option 2', description: 'Description for Option 2' }];
-
-    const MaxWidthPopup = ({ isOpen, onClose, children }) => {
-        return (
-            <Modal
-                isOpen={isOpen}
-                onRequestClose={onClose}
-                shouldCloseOnOverlayClick={false}
-                contentLabel="Max Width Popup"
-                style={{
-                    content: {
-                        maxWidth: '90%',
-                        margin: 'auto',
-                        backgroundColor: '#f7f7f7',
-                    },
-                }}
-            >
-                {children}
-            </Modal>
-        );
-    };
-
-    return (
-        <Container>
-            <MaxWidthPopup isOpen={isPopupOpen} onClose={closePopup}>
-                <SectionContainer>
-                    <Title>Create Booking</Title>
-                    <InputContainer>
-                        <label>Title:</label>
-                        <TextInput placeholder="Enter Title" />
-                    </InputContainer>
-                    <InputContainer>
-                        <label>Description:</label>
-                        <TextArea placeholder="Enter Your Description" rows={3} />
-                    </InputContainer>
-                    <h4>When You are available for this booking?</h4>
-                    <RadioButtonContainer>
-                        {options.map((option) => (
-                            <RadioButtonLabel key={option.value}>
-                                <RadioButton
-                                    type="radio"
-                                    value={option.value}
-                                    checked={selectedOption === option.value}
-                                    onChange={() => handleOptionChange(option.value)}
-                                />
-                                {option.title} - {option.description}
-                            </RadioButtonLabel>
-                        ))}
-                    </RadioButtonContainer>
-                    <div>
-                        <Button onClick={closePopup}>Create Booking</Button>
-                        <StyledCancelButton onClick={closePopup}>Cancel</StyledCancelButton>
-                    </div>
-                </SectionContainer>
-            </MaxWidthPopup>
-
-            <Title>Booking Management</Title>
-            <TableContainer>
-                <TableRow>
-                    <TableHeaderCell flex={0.3} borderRadius="top-left"><Text>S.no</Text></TableHeaderCell>
-                    <TableHeaderCell flex={0.4}><Text>Id</Text></TableHeaderCell>
-                    <TableHeaderCell flex={1}><Text>Name</Text></TableHeaderCell>
-                    <TableHeaderCell flex={1}><Text>Phone</Text></TableHeaderCell>
-                    <TableHeaderCell flex={1}><Text>Email</Text></TableHeaderCell>
-                    <TableHeaderCell flex={0.4}><Text>Type</Text></TableHeaderCell>
-                    <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Status</Text></TableHeaderCell>
-                </TableRow>
-                <TableFooter />
-            </TableContainer>
-
-            <Button onClick={openPopup}>Create Booking</Button>
-        </Container>
-    );
-};
-
-export default BookingManagement;
