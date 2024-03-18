@@ -6,10 +6,7 @@ import { toast } from 'react-toastify';
 
 export default function Payment({ selectedClientData }) {
     const [formData, setFormData] = useState({
-        dropdown: '',
-        serialNumber: '',
-        name: '',
-        ClientID: selectedClientData.ClientID,
+        Payment_Gateway_Type: 1
     });
 
     const handleChange = (key, value) => {
@@ -49,7 +46,7 @@ export default function Payment({ selectedClientData }) {
             <FormContainer>
                 <Form onSubmit={handleSave}>
                     <FormGroup>
-                        <Label htmlFor="dropdown">Payment Gateway:</Label>
+                        <Label htmlFor="dropdown">Payment Gateway</Label>
                         <Select
                             id="dropdown"
                             name="dropdown"
@@ -62,7 +59,7 @@ export default function Payment({ selectedClientData }) {
                         </Select>
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="serialNumber">Key:</Label>
+                        <Label htmlFor="serialNumber">Key</Label>
                         <Input
                             type="text"
                             id="serialNumber"
@@ -72,7 +69,7 @@ export default function Payment({ selectedClientData }) {
                         />
                     </FormGroup>
                     <FormGroup>
-                        <Label htmlFor="name">Key Secret:</Label>
+                        <Label htmlFor="name">Key Secret</Label>
                         <Input
                             type="text"
                             id="name"

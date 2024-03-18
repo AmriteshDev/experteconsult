@@ -6,25 +6,25 @@ import colors from './colors';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-export default function TermForm({ selectedClientData }) {
+export default function AboutUs({ selectedClientData }) {
     const [formData, setFormData] = useState({
         ClientID: selectedClientData.ClientID || '',
-        Terms_and_Conditions: selectedClientData.Terms_and_Conditions || ''
+        About_Us: selectedClientData.About_Us || ''
     });
 
     const handleForm = (value) => {
         setFormData({
             ...formData,
-            Terms_and_Conditions: value
+            About_Us: value
         })
     }
 
     const handleSave = (e) => {
         e.preventDefault();
 
-        const request = { ClientID: formData.ClientID, Terms_and_Conditions: formData.Terms_and_Conditions }
+        const request = { ClientID: formData.ClientID, About_Us: formData.About_Us }
 
-        fetchPostData("/Update_Client_Terms_and_Conditions", request)
+        fetchPostData("/Update_Client_About_Us", request)
             .then(response => {
                 const updatedData = { ...selectedClientData, ...request }
                 localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
@@ -36,8 +36,8 @@ export default function TermForm({ selectedClientData }) {
 
     return (
         <Container>
-            <Title>Terms and Conditions</Title>
-            <ReactQuill theme="snow" value={formData.Terms_and_Conditions} onChange={handleForm} />
+            <Title>About Us</Title>
+            <ReactQuill theme="snow" value={formData.About_Us} onChange={handleForm} />
             <Button onClick={handleSave}>Save</Button>
         </Container>
     );

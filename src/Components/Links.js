@@ -7,12 +7,9 @@ import { toast } from 'react-toastify';
 
 export default function Links({ selectedClientData }) {
     const [formData, setFormData] = useState({
-        serialNumber: '',
-        name: selectedClientData.Name || '',
         ClientID: selectedClientData.ClientID || '',
         Zoom_Meet_Link: selectedClientData.Zoom_Meet_Link || '',
         Google_Meet_Link: selectedClientData.Google_Meet_Link || '',
-
     });
 
     const [selectedLink, setSelctedLink] = useState("");
@@ -20,23 +17,20 @@ export default function Links({ selectedClientData }) {
     const handleLinkSelection = (link) => {
         setSelctedLink(link)
     };
-    const handleChange = (key, value) => {
-
+    
+    const handleChange = (value) => {
         setFormData({
             ...formData,
-            [key]: value
-        })
-
-
-    }
+            [selectedLink === 'Zoom' ? 'Zoom_Meet_Link' : 'Google_Meet_Link']: value
+        });
+    };
+    
     const handleSave = (e) => {
         e.preventDefault();
 
-        const request = {
-            ClientID: formData.ClientID,
-            Zoom_Meet_Link: formData.Zoom_Meet_Link,
-            Google_Meet_Link: formData.Google_Meet_Link,
-        }
+        const request = { ClientID: formData.ClientID }
+        if (selectedLink === 'Google') request.Google_Meet_Link = formData.Google_Meet_Link
+        if (selectedLink === 'Zoom') request.Zoom_Meet_Link = formData.Zoom_Meet_Link
 
         fetchPostData("/Update_Client_Meeting_Links", request)
             .then(response => {
@@ -61,18 +55,18 @@ export default function Links({ selectedClientData }) {
                         onChange={(e) => handleLinkSelection(e.target.value)}
                     >
                         <option value="">Select an option</option>
-                        <option value="Modular">Zoom meets</option>
-                        <option value="Independent">Google meet</option>
+                        <option value="Zoom">Zoom meets</option>
+                        <option value="Google">Google meet</option>
                     </Select>
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="serialNumber">Static permanent link:</Label>
+                    <Label htmlFor="Meeting_links">Static permanent link{selectedLink ? `(${selectedLink})` : ''}</Label>
                     <Input
                         type="text"
-                        id="serialNumber"
-                        name="serialNumber"
-                        value={formData.serialNumber}
-                        onChange={(e) => handleChange("serialNumber", e.target.value)}
+                        id="Meeting_links"
+                        name="Meeting_links"
+                        value={selectedLink === 'Zoom' ? formData.Zoom_Meet_Link : selectedLink === 'Google' ? formData.Google_Meet_Link : '' }
+                        onChange={(e) => handleChange(e.target.value)}
                     />
                 </FormGroup>
                 <FormGroup>

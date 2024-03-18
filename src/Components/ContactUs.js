@@ -6,7 +6,7 @@ import colors from './colors';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-export default function TermForm({ selectedClientData }) {
+export default function ContactUs({ selectedClientData }) {
     const [formData, setFormData] = useState({
         ClientID: selectedClientData.ClientID || '',
         Terms_and_Conditions: selectedClientData.Terms_and_Conditions || ''
@@ -36,7 +36,7 @@ export default function TermForm({ selectedClientData }) {
 
     return (
         <Container>
-            <Title>Terms and Conditions</Title>
+            <Title>Contact Us</Title>
             <ReactQuill theme="snow" value={formData.Terms_and_Conditions} onChange={handleForm} />
             <Button onClick={handleSave}>Save</Button>
         </Container>

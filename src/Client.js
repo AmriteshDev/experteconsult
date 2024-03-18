@@ -9,6 +9,9 @@ import Layout from './Components/Layout';
 import Links from './Components/Links';
 import BookingManagement from './Components/BookingManagement';
 import Pricing from './Components/Pricing';
+import Customers from './Components/Customers';
+import AboutUs from './Components/AboutUs';
+import ContactUs from './Components/ContactUs';
 
 let selectedClientData = localStorage.getItem("selectedClientData");
 selectedClientData = JSON.parse(selectedClientData);
@@ -23,9 +26,9 @@ const steps = [
   { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
   { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
   { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
-  { title: 'Customers', component: <TermForm selectedClientData={selectedClientData} /> },
-  { title: 'About Us', component: <TermForm selectedClientData={selectedClientData} /> },
-  { title: 'Contact Us', component: <TermForm selectedClientData={selectedClientData} /> },
+  { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
+  { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
+  { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
 
 ];
 
