@@ -12,6 +12,8 @@ import Pricing from './Components/Pricing';
 import Customers from './Components/Customers';
 import AboutUs from './Components/AboutUs';
 import ContactUs from './Components/ContactUs';
+import colors from '../src/Components/colors';
+
 
 let selectedClientData = localStorage.getItem("selectedClientData");
 selectedClientData = JSON.parse(selectedClientData);
@@ -22,9 +24,9 @@ const steps = [
   { title: 'Layout', component: <Layout selectedClientData={selectedClientData} /> },
   { title: 'Input', component: <LayoutInputForm selectedClientData={selectedClientData} /> },
   { title: 'Links', component: <Links selectedClientData={selectedClientData} /> },
-  { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
+  // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
   { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
-  { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
+  // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
   { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
   { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
   { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
@@ -38,38 +40,37 @@ export default function Client() {
   return (
     <Container>
       <ContentWrapper>
-        <LeftContainer>
+        <LeftContainer className='abc'>
           <MultiStep
             prevButton={{
               title: 'Back', style: {
                 background: "#cd3b3bed",
-                position: "absolute",
-                left: "30px",
-                padding: "10px 24px",
+                padding: "10px 20px",
                 fontSize: "15px",
                 color: "white",
-
-
+                borderRadius: "25px",
+                border: "none",
               }
             }}
             nextButton={{
               title: 'Next', style: {
                 background: '#08c3ff',
-                position: "absolute",
-                right: "30px",
-                padding: "10px 24px",
+                borderRadius: "25px",
+                padding: "10px 20px",
                 fontSize: "15px",
-                color: "white"
+                color: "white",
+                border: "none",
               }
             }}
             activeStep={0}
             showNavigation={true}
             steps={steps}
-          /> </LeftContainer>
-        {/* <RightContainer>
-
-          <p>Form Information</p>
-        </RightContainer> */}
+          />
+        </LeftContainer>
+        <VerticalLine></VerticalLine>
+        <RightContainer>
+          <Title>Form Information</Title>
+        </RightContainer>
       </ContentWrapper>
     </Container>
   );
@@ -88,8 +89,9 @@ const ContentWrapper = styled.div`
 `;
 
 const LeftContainer = styled.div`
-  flex: 1;
-  padding: 20px;
+
+  padding: 35px;
+  width: 60%;
   .go2392553372{
     display: block;
     flex-direction: row;
@@ -113,9 +115,45 @@ const LeftContainer = styled.div`
     right: 0px;
 
   }
+  .go2150698616 span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: black;
+    font-weight: 600;
+    }
+
+    .go2150698616 {
+      display: inline-block;
+      text-align: center;
+      line-height: 4.8rem;
+      padding: 0 0.6rem;
+      cursor: pointer;
+      min-width: 0rem;
+      color: ${colors.gray};
+      border-bottom: 2px solid #6842ef;
+       }
+
+       div{
+        div{
+          div{
+            display: flex;
+            justify-content: space-between;
+          }
+        }
+       }
 `;
 
 const RightContainer = styled.div`
   flex: 1;
   padding: 20px;
 `;
+const VerticalLine = styled.div`
+  border-left: 3px solid ${colors.secondary};
+ `;
+
+const Title = styled.h1`
+    color: ${colors.black};
+    text-align: center;
+`;
+

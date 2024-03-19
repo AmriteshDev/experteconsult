@@ -56,7 +56,6 @@ const Container = styled.div`
         height: 300px
     }
 `;
-
 const Title = styled.h1`
     color: ${colors.black};
 `;

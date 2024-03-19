@@ -87,21 +87,24 @@ export default function Payment({ selectedClientData }) {
 
 const Container = styled.div`
     width: 95%;
-    align-self: center;
-    margin-top: 20px;
+    margin: 20px auto;
     align-items: center;
     flex-direction: column;
     display: flex;
-    background-color: #f5f5f5; 
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
 const Title = styled.h1`
     color: ${colors.black};
 `;
 
 const FormContainer = styled.div`
-    width: 30%;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
 `;
 
 const Form = styled.form`
@@ -121,31 +124,52 @@ const Label = styled.label`
 `;
 
 const Select = styled.select`
-    width: 100%;
-    padding: 8px;
-    border: 1px solid ${colors.gray};
+    width: 75%;
+    padding: 10px;
+    border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Input = styled.input`
-    width: 100%;
-    padding: 8px;
-    border: 1px solid ${colors.gray};
+    width: 75%;
+    padding: 10px;
+    border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
+    max-width: 150px;
+    margin-top: 20px;
+    width: 100%;
     padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    max-width: 150px;
-    margin-top: 30px;
+    align-self: center
+
 `;

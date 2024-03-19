@@ -4,8 +4,8 @@ import colors from './colors';
 import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
 
-export default function BasicInfo({selectedClientData}) {
-   
+export default function BasicInfo({ selectedClientData }) {
+
     const [formData, setFormData] = useState({
         Client_Code: selectedClientData.Client_Code || '',
         Name: selectedClientData.Name || '',
@@ -47,7 +47,7 @@ export default function BasicInfo({selectedClientData}) {
         fetchPostData('/Update_Client_Basic_Information', request)
             .then(response => {
                 if (response.success) {
-                    const updatedData = {...selectedClientData, ...request}
+                    const updatedData = { ...selectedClientData, ...request }
                     localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
                     toast.success(response.extras.Status || 'Added Successfully')
                 }
@@ -58,40 +58,36 @@ export default function BasicInfo({selectedClientData}) {
     };
     return (
         <Container>
-            <Title>Basic Info</Title>
-            <FormContainer>
-                <Column>
-                    <FormGroup>
-                        <Label htmlFor="Client_Code">S.No</Label>
-                        <InputField id="Client_Code" value={formData.Client_Code} onChange={(e) => handleForm("Client_Code", e.target.value)} name='Client_Code' placeholder="Serial No" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label htmlFor="Name">Name</Label>
-                        <InputField id="Name" name='Name' value={formData.Name} onChange={(e) => handleForm("Name", e.target.value)} placeholder="Enter Your Name" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label htmlFor="PhoneNumber">Phone</Label>
-                        <InputField id="PhoneNumber" name='PhoneNumber' value={formData.PhoneNumber} onChange={(e) => handleForm("PhoneNumber", e.target.value)} placeholder="Enter Your Phone" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label htmlFor="EmailID">Email</Label>
-                        <InputField id="EmailID" name='EmailID' value={formData.EmailID} onChange={(e) => handleForm("EmailID", e.target.value)} placeholder="Enter Your Email Id" />
-                    </FormGroup>
-                </Column>
-                <Column>
-                    <FormGroup>
-                        <Label htmlFor="Facebook_Link">FB Link</Label>
-                        <InputField id="Facebook_Link" name='Facebook_Link' value={formData.Facebook_Link} onChange={(e) => handleForm("Facebook_Link", e.target.value)} placeholder="facebook.com" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label htmlFor="Instagram_Link">Insta Link</Label>
-                        <InputField id="Instagram_Link" name='Instagram_Link' value={formData.Instagram_Link} onChange={(e) => handleForm("Instagram_Link", e.target.value)} placeholder="instagram.com" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label htmlFor="Twitter_Link">X Link</Label>
-                        <InputField id="Twitter_Link" name='Twitter_Link' value={formData.Twitter_Link} onChange={(e) => handleForm("Twitter_Link", e.target.value)} placeholder="x.com" />
-                    </FormGroup>
-                </Column>
+            <Title>Basic Informations</Title>
+            <FormContainer >
+                {/* <FormGroup>
+                    <Label htmlFor="Client_Code">S.No</Label>
+                    <InputField id="Client_Code" value={formData.Client_Code} onChange={(e) => handleForm("Client_Code", e.target.value)} name='Client_Code' placeholder="Serial No" />
+                </FormGroup> */}
+                <FormGroup>
+                    <Label htmlFor="Name">Name</Label>
+                    <InputField id="Name" name='Name' value={formData.Name} onChange={(e) => handleForm("Name", e.target.value)} placeholder="Enter Your Name" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="PhoneNumber">Phone</Label>
+                    <InputField id="PhoneNumber" name='PhoneNumber' value={formData.PhoneNumber} onChange={(e) => handleForm("PhoneNumber", e.target.value)} placeholder="Enter Your Phone" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="EmailID">Email</Label>
+                    <InputField id="EmailID" name='EmailID' value={formData.EmailID} onChange={(e) => handleForm("EmailID", e.target.value)} placeholder="Enter Your Email Id" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="Facebook_Link">FB Link</Label>
+                    <InputField id="Facebook_Link" name='Facebook_Link' value={formData.Facebook_Link} onChange={(e) => handleForm("Facebook_Link", e.target.value)} placeholder="facebook.com" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="Instagram_Link">Insta Link</Label>
+                    <InputField id="Instagram_Link" name='Instagram_Link' value={formData.Instagram_Link} onChange={(e) => handleForm("Instagram_Link", e.target.value)} placeholder="instagram.com" />
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="Twitter_Link">X Link</Label>
+                    <InputField id="Twitter_Link" name='Twitter_Link' value={formData.Twitter_Link} onChange={(e) => handleForm("Twitter_Link", e.target.value)} placeholder="x.com" />
+                </FormGroup>
             </FormContainer>
             <Button onClick={handleSave}>Save</Button>
         </Container>
@@ -116,15 +112,9 @@ const Title = styled.h1`
 
 const FormContainer = styled.div`
     display: flex;
+    flex-direction: column;
     width: 100%;
     margin-top: 20px;
-`;
-
-const Column = styled.div`
-    flex: 1;
-    margin: 0 10px;
-    display: flex;
-    flex-direction: column;
 `;
 
 const FormGroup = styled.div`
@@ -132,17 +122,27 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-    text-align: left;
+    // text-align: left;
     color: ${colors.black};
+    margin-right: 30px
 `;
 
 const InputField = styled.input`
-    width: 100%;
+    width: 75%;
     padding: 10px;
     border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Button = styled.button`

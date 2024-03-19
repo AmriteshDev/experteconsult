@@ -17,20 +17,27 @@ export default function Links({ selectedClientData }) {
     const handleLinkSelection = (link) => {
         setSelctedLink(link)
     };
-    
-    const handleChange = (value) => {
+
+    const handleChange = (key, value) => {
         setFormData({
             ...formData,
-            [selectedLink === 'Zoom' ? 'Zoom_Meet_Link' : 'Google_Meet_Link']: value
+            // [selectedLink === 'Zoom' ? 'Zoom_Meet_Link' : 'Google_Meet_Link']: value
+            [key]: value
         });
     };
-    
+
     const handleSave = (e) => {
         e.preventDefault();
 
-        const request = { ClientID: formData.ClientID }
-        if (selectedLink === 'Google') request.Google_Meet_Link = formData.Google_Meet_Link
-        if (selectedLink === 'Zoom') request.Zoom_Meet_Link = formData.Zoom_Meet_Link
+        // const request = { ClientID: formData.ClientID }
+        // if (selectedLink === 'Google') request.Google_Meet_Link = formData.Google_Meet_Link
+        // if (selectedLink === 'Zoom') request.Zoom_Meet_Link = formData.Zoom_Meet_Link
+
+        const request = {
+            ClientID: formData.ClientID,
+            Zoom_Meet_Link: formData.Zoom_Meet_Link,
+            Google_Meet_Link: formData.Google_Meet_Link
+        }
 
         fetchPostData("/Update_Client_Meeting_Links", request)
             .then(response => {
@@ -47,7 +54,7 @@ export default function Links({ selectedClientData }) {
             <Title>Meeting Links</Title>
             <FormContainer onSubmit={handleSave}>
                 <FormGroup>
-                    <Label htmlFor="dropdown">Meeting links:</Label>
+                    <Label htmlFor="dropdown">Meeting links</Label>
                     <Select
                         id="dropdown"
                         name="dropdown"
@@ -60,23 +67,23 @@ export default function Links({ selectedClientData }) {
                     </Select>
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="Meeting_links">Static permanent link{selectedLink ? `(${selectedLink})` : ''}</Label>
+                    <Label htmlFor="Meeting_links">Zoom_Meet_Link</Label>
                     <Input
                         type="text"
-                        id="Meeting_links"
-                        name="Meeting_links"
-                        value={selectedLink === 'Zoom' ? formData.Zoom_Meet_Link : selectedLink === 'Google' ? formData.Google_Meet_Link : '' }
-                        onChange={(e) => handleChange(e.target.value)}
+                        id="Zoom_Meet_Link"
+                        name="Zoom_Meet_Link"
+                        value={formData.Zoom_Meet_Link}
+                        onChange={(e) => handleChange("Zoom_Meet_Link", e.target.value)}
                     />
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="name">Premium permanent link (paid):</Label>
+                    <Label htmlFor="name">Google_Meet_Link</Label>
                     <Input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={(e) => handleChange("name", e.target.value)}
+                        id="Google_Meet_Link"
+                        name="Google_Meet_Link"
+                        value={formData.Google_Meet_Link}
+                        onChange={(e) => handleChange("Google_Meet_Link", e.target.value)}
                     />
                 </FormGroup>
                 <Button >Save</Button>
@@ -91,6 +98,10 @@ const Container = styled.div`
     align-items: center;
     flex-direction: column;
     display: flex;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
 
 const Title = styled.h1`
@@ -98,14 +109,10 @@ const Title = styled.h1`
 `;
 
 const FormContainer = styled.form`
-    width: 80%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-top: 20px;
 `;
 
 const FormGroup = styled.div`
@@ -120,31 +127,51 @@ const Label = styled.label`
 `;
 
 const Select = styled.select`
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
+    width: 75%;
+    padding: 10px;
+    border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Input = styled.input`
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
+    width: 75%;
+    padding: 10px;
+    border: 1px solid ${colors.gray}; 
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
     max-width: 150px;
+    margin-top: 20px;
     width: 100%;
     padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    align-self: center
 `;

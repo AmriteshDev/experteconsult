@@ -119,16 +119,14 @@ const LayoutInputForm = ({ selectedClientData }) => {
 
 const Container = styled.div`
     width: 95%;
-    align-self: center;
-    margin-top: 20px;
+    margin: 20px auto;
     align-items: center;
     flex-direction: column;
     display: flex;
     background-color: #f5f5f5;
-
-    padding: 20px; /* Added padding */
-    border-radius: 10px; /* Added border radius */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added box shadow */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
 
 const Title = styled.h1`
@@ -137,9 +135,8 @@ const Title = styled.h1`
 
 const FormContainer = styled.div`
     display: flex;
-    flex-direction: row;
     width: 100%;
-    justify-content: space-between;
+    margin-top: 20px;
 `;
 
 const Form = styled.form`
@@ -165,19 +162,17 @@ const Input = styled.input`
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
-    /* Additional styles to mimic text input */
-    background-color: white; /* Background color */
-    color: ${colors.black}; /* Text color */
-    cursor: pointer; /* Change cursor on hover */
-    /* Additional styles for file input */
+    background-color: white; 
+    color: ${colors.black}; 
+    cursor: pointer; 
     &:focus {
-        outline: none; /* Remove default focus outline */
-        border-color: ${colors.primary}; /* Change border color on focus */
+        outline: none; 
+        border-color: ${colors.primary}; 
     }
-    /* Additional styles for file input */
     &:hover {
-        border-color: ${colors.primary}; /* Change border color on hover */
+        border-color: ${colors.primary}; 
     }
+    margin-right: 10px 
 `;
 
 const Textarea = styled.textarea`
@@ -192,11 +187,15 @@ const Textarea = styled.textarea`
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
+    max-width: 150px;
+    width: 100%;
     padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    margin-top: 20px;
+    align-self: center
 `;
 
 const PreviewImage = styled.img`

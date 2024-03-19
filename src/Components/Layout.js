@@ -60,7 +60,7 @@ export default function Layout({ selectedClientData }) {
 const Container = styled.div`
   width: 95%;
   align-self: center;
-  margin-top: 20px;
+  margin: 20px auto;
   align-items: center;
   flex-direction: column;
   display: flex;
@@ -71,15 +71,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${colors.black};
-  margin-bottom: 20px;
+    color: ${colors.black};
 `;
 
 const LayoutContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
+display: flex;
+width: 100%;
+margin-top: 20px;
+  
 `;
 
 const LayoutItem = styled.div`
@@ -115,11 +114,11 @@ const SaveButton = styled.button`
   background-color: ${colors.primary};
   color: ${colors.white};
   max-width: 150px;
+  margin-top: 20px;
   width: 100%;
   padding: 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 20px;
 `;

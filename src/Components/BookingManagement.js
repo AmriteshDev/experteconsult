@@ -154,18 +154,24 @@ const MaxWidthPopup = ({ isOpen, onClose, children }) => {
 
 // Styled components for BookingManagement
 const Container = styled.div`
-    width: 95%;
-    align-self: center;
-    margin-top: 20px;
-    align-items: center;
-    flex-direction: column;
-    display: flex;
+width: 95%;
+margin: 20px auto;
+align-items: center;
+flex-direction: column;
+display: flex;
+background-color: #f5f5f5;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
 
 
 
 const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  margin-top: 20px;
 `;
 
 const TableRow = styled.div`
@@ -194,15 +200,16 @@ const Text = styled.span`
 `;
 
 const Button = styled.button`
-    background-color: ${colors.primary};
-    color: ${colors.white};
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    max-width: 150px;
-    margin-top: 30px;
+  background-color: ${colors.primary};
+  color: ${colors.white};
+  max-width: 150px;
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
 `;
 
 const SectionContainer = styled.div`
@@ -212,8 +219,7 @@ const SectionContainer = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${colors.black};
-  margin-bottom: 20px;
+    color: ${colors.black};
 `;
 
 const InputContainer = styled.div`
