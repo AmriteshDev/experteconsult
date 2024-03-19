@@ -50,16 +50,21 @@ export default function Client() {
                 color: "white",
                 borderRadius: "25px",
                 border: "none",
+                cursor: 'pointer'
               }
             }}
             nextButton={{
-              title: 'Next', style: {
+              title: 'Next', 
+              style: {
                 background: '#08c3ff',
                 borderRadius: "25px",
                 padding: "10px 20px",
                 fontSize: "15px",
                 color: "white",
                 border: "none",
+                position: 'absolute',
+                right: '38%',
+                cursor: 'pointer'
               }
             }}
             activeStep={0}
@@ -132,16 +137,7 @@ const LeftContainer = styled.div`
       min-width: 0rem;
       color: ${colors.gray};
       border-bottom: 2px solid #6842ef;
-       }
-
-       div{
-        div{
-          div{
-            display: flex;
-            justify-content: space-between;
-          }
-        }
-       }
+    }
 `;
 
 const RightContainer = styled.div`
