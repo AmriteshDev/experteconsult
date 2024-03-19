@@ -5,6 +5,7 @@ import LogoIcon from '../assets/images/logo.webp';
 import { TbLogout } from "react-icons/tb";
 import { fetchPostData } from '../helper/helper';
 import Client from '../Client';
+import Home from '../Home';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,15 +15,20 @@ const Navbar = () => {
 
   const logOut = () => {
     localStorage.removeItem("ProfileData");
+    localStorage.removeItem("selectedClientData");
     window.location.href = "/";
   };
 
-  const handleClientSelect = (client) => {
-    console.log('client ===>>> ', client)
-    setSelectedClient(client);
+  const handleClientSelect = async (client) => {
+    const clientDetail = await fetchClientData();
+    client = client ? JSON.parse(client) : []
+    let filteredClient = clientDetail.filter((item) => item.EmailID === client.EmailID);
+    filteredClient = JSON.stringify(filteredClient[0])
+    setSelectedClient(filteredClient);
+    localStorage.setItem('selectedClientData', filteredClient);
   };
 
-  const fetchClientData = () => {
+  const fetchClientData = async () => {
     const request = {
       "Skip": 0,
       "Limit": 10,
@@ -32,84 +38,90 @@ const Navbar = () => {
       "Search": ""
     };
 
-    fetchPostData('/Filter_All_Clients', request)
-      .then(response => {
-        if (response.success && response.extras?.Data) {
-          setClientList(response.extras.Data);
-        }
-      })
-      .catch(error => {
-        console.log('Error fetching client data:', error);
-      });
+    try {
+      const response = await fetchPostData('/Filter_All_Clients', request);
+      if (response.success && response.extras?.Data) {
+        return response.extras.Data;
+      }
+    } catch (error) {
+      console.log('Error fetching client data:', error);
+      return [];
+    }
   };
 
   useEffect(() => {
-    fetchClientData();
+    fetchClientData().then(clientDetail => {
+      setClientList(clientDetail);
+    });
   }, []);
 
   return (
-    <NavbarContainer>
-      <LogoWrapper>
-        <Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
-        <ClientSelect>
-          <select onChange={(e) => handleClientSelect(e.target.value)}>
-            <option value="">Select Client</option>
-            {clientList.map(client => (
-              <option key={client.ClientID} value={JSON.stringify(client)}>{client.EmailID}</option>
-            ))}
-          </select>
-        </ClientSelect>
-      </LogoWrapper>
-      <NavItems>
-        {ProfileData && selectedClient &&
-          <>
-            <Client details={selectedClient}/>
-            <NavItem onClick={() => setSelectedClient(null)} to="/">Back to admin</NavItem>
-          </>
-        }
-        <div onClick={logOut}><TbLogout style={{ color: "red", cursor: 'pointer' }} /></div>
-      </NavItems>
-    </NavbarContainer>
+    <>
+      <NavbarContainer>
+        <LogoWrapper>
+          <Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
+          <ClientSelect>
+            <select onChange={(e) => handleClientSelect(e.target.value)}>
+              <option value="">Select Client</option>
+              {clientList.map(client => (
+                <option key={client.ClientID} value={JSON.stringify(client)}>{client.EmailID}</option>
+              ))}
+            </select>
+          </ClientSelect>
+        </LogoWrapper>
+        <NavItems>
+          {/* <NavItem onClick={() => setSelectedClient(null)} to="/">Back to admin</NavItem> */}
+          <div onClick={logOut}><TbLogout style={{ color: "red", cursor: 'pointer' }} /></div>
+        </NavItems>
+      </NavbarContainer>
+      {ProfileData && selectedClient ? (
+        <>
+          <Client details={selectedClient} />
+        </>
+      ) : (
+        ProfileData && ProfileData.Role_Type === 1 && <Home />
+      )}
+    </>
   );
 };
 
 export default Navbar;
 
 const LogoWrapper = styled.div`
-				display: flex;
-				gap: 5px;
-				align-items: center;
-				`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`
 
 const NavbarContainer = styled.div`
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				background-color: ${props => props.theme.primary};
-				color: ${props => props.theme.white};
-				padding: 10px 20px;
-				`;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: ${props => props.theme.primary};
+  color: ${props => props.theme.white};
+  padding: 10px 20px;
+`;
 
 const Logo = styled.div`
-				font-size: 24px;
-				`;
+  font-size: 24px;
+`;
 
 const ClientSelect = styled.div`
-				select {
-					width: 200px;
-				height: 30px;
-	}
-				`;
+  select {
+    width: 200px;
+    height: 30px;
+  }
+`;
 
 const NavItems = styled.div`
-				display: flex;
-				`;
+	display: flex;
+`;
 
 const NavItem = styled(Link)`
-				margin-right: 20px;
-				text-decoration: none;
-				color: ${props => props.theme.white};
-				&:hover {
-					color: ${props => props.theme.accent};
+  margin-right: 20px;
+  text-decoration: none;
+  color: ${props => props.theme.white};
+  &:hover {
+    color: ${props => props.theme.accent};
 	}
-				`;
+`;

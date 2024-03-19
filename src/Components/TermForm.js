@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
@@ -7,10 +7,14 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 export default function TermForm({ selectedClientData }) {
-    const [formData, setFormData] = useState({
-        ClientID: selectedClientData.ClientID || '',
-        Terms_and_Conditions: selectedClientData.Terms_and_Conditions || ''
-    });
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        setFormData({
+            ClientID: selectedClientData.ClientID || '',
+            Terms_and_Conditions: selectedClientData.Terms_and_Conditions || ''
+        })
+    }, [selectedClientData])
 
     const handleForm = (value) => {
         setFormData({

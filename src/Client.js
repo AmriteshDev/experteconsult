@@ -15,30 +15,28 @@ import ContactUs from './Components/ContactUs';
 import colors from '../src/Components/colors';
 
 export default function Client(props) {
- 
+
   let selectedClientData = props.details ? JSON.parse(props.details) : ''
 
-  console.log('props.selectedClientData ===>>> ', selectedClientData)
+  const steps = [
+    { title: 'Basic Info', component: <BasicInfo selectedClientData={selectedClientData} /> },
+    { title: 'Layout', component: <Layout selectedClientData={selectedClientData} /> },
+    { title: 'Input', component: <LayoutInputForm selectedClientData={selectedClientData} /> },
+    { title: 'Links', component: <Links selectedClientData={selectedClientData} /> },
+    { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
+    { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
+    { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
+    // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
+    // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
+    // { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
+    // { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
 
-    const steps = [
-      { title: 'Basic Info', component: <BasicInfo selectedClientData={selectedClientData} /> },
-      { title: 'Layout', component: <Layout selectedClientData={selectedClientData} /> },
-      { title: 'Input', component: <LayoutInputForm selectedClientData={selectedClientData} /> },
-      { title: 'Links', component: <Links selectedClientData={selectedClientData} /> },
-      // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
-      { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
-      // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
-      { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
-      { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
-      { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
-      { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
-    
-    ];
+  ];
 
   return (
     <Container>
       <ContentWrapper>
-        <LeftContainer className='abc'>
+        <LeftContainer>
           <MultiStep
             prevButton={{
               title: 'Back', style: {
@@ -52,7 +50,7 @@ export default function Client(props) {
               }
             }}
             nextButton={{
-              title: 'Next', 
+              title: 'Next',
               style: {
                 background: '#08c3ff',
                 borderRadius: "25px",

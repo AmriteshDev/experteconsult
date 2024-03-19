@@ -116,10 +116,10 @@ const OptionsWrapper = styled.div`
     flex-direction: column; 
     right: calc(30% + 55px);
 `
-const Option = styled.div`
-    padding: 8px;
-    cursor: pointer;
-`
+// const Option = styled.div`
+//     padding: 8px;
+//     cursor: pointer;
+// `
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -130,37 +130,80 @@ const HomeWrapper = styled.div`
   width: 70%;
 `;
 
-const HomeRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 3%;
-`;
+// const HomeRow = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   margin: 3%;
+// `;
 
-const HomeCell = styled.div`
-  flex: ${props => props.flex || 'initial'};
-  text-align: left;
-  background-color: ${props => props.backgroundColor || '#fff'};
-  padding-top: 5px;
-  padding-bottom: 5px;
-`;
+// const HomeCell = styled.div`
+//   flex: ${props => props.flex || 'initial'};
+//   text-align: left;
+//   background-color: ${props => props.backgroundColor || '#fff'};
+//   padding-top: 5px;
+//   padding-bottom: 5px;
+// `;
 
-const Button = styled.button`
-  margin-left: 5px;
-  background-color: white;
-  color: black;
-  transform: rotate(90deg);
-  border: none;
-  cursor: pointer;
-`;
+// const Button = styled.button`
+//   margin-left: 5px;
+//   background-color: white;
+//   color: black;
+//   transform: rotate(90deg);
+//   border: none;
+//   cursor: pointer;
+// `;
 
 const TableContainer = styled.div`
     width: 95%;
     margin: 20px auto;
     align-items: center;
-    // flex-direction: column;
-    // display: flex;
     background-color: #f5f5f5;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+`;
+
+
+
+
+// const TableContainer = styled.div`
+//   border: 1px solid #ccc;
+//   border-radius: 5px;
+//   overflow: hidden;
+// `;
+
+const HomeRow = styled.div`
+  display: flex;
+  border-bottom: 1px solid #ccc;
+`;
+
+const HomeCell = styled.div`
+  flex: ${props => props.flex};
+  padding: 10px;
+`;
+
+const Button = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+// const OptionsWrapper = styled.div`
+//   position: absolute;
+//   top: ${props => props.top}px;
+//   left: calc(100% - 150px);
+//   background-color: #fff;
+//   border: 1px solid #ccc;
+//   border-radius: 5px;
+//   padding: 5px;
+// `;
+
+const Option = styled.div`
+  padding: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;

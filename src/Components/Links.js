@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
 import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
-
 
 export default function Links({ selectedClientData }) {
     const [formData, setFormData] = useState({
@@ -12,16 +11,17 @@ export default function Links({ selectedClientData }) {
         Google_Meet_Link: selectedClientData.Google_Meet_Link || '',
     });
 
-    const [selectedLink, setSelctedLink] = useState("");
-
-    const handleLinkSelection = (link) => {
-        setSelctedLink(link)
-    };
+    useEffect(() => {
+        setFormData({
+            ClientID: selectedClientData.ClientID || '',
+            Zoom_Meet_Link: selectedClientData.Zoom_Meet_Link || '',
+            Google_Meet_Link: selectedClientData.Google_Meet_Link || '',
+        });
+    }, [selectedClientData]);
 
     const handleChange = (key, value) => {
         setFormData({
             ...formData,
-            // [selectedLink === 'Zoom' ? 'Zoom_Meet_Link' : 'Google_Meet_Link']: value
             [key]: value
         });
     };
@@ -29,24 +29,25 @@ export default function Links({ selectedClientData }) {
     const handleSave = (e) => {
         e.preventDefault();
 
-        // const request = { ClientID: formData.ClientID }
-        // if (selectedLink === 'Google') request.Google_Meet_Link = formData.Google_Meet_Link
-        // if (selectedLink === 'Zoom') request.Zoom_Meet_Link = formData.Zoom_Meet_Link
-
         const request = {
             ClientID: formData.ClientID,
             Zoom_Meet_Link: formData.Zoom_Meet_Link,
             Google_Meet_Link: formData.Google_Meet_Link
-        }
+        };
 
         fetchPostData("/Update_Client_Meeting_Links", request)
             .then(response => {
-                const updatedData = { ...selectedClientData, ...request }
-                localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
-                toast.success(response.extras.Status || 'Added Successfully')
-            }).catch(error => {
-                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+                if (response.success) {
+                    const updatedData = { ...selectedClientData, ...request };
+                    localStorage.setItem('selectedClientData', JSON.stringify(updatedData));
+                    toast.success(response.extras.Status || 'Added Successfully');
+                } else {
+                    toast.error(response?.extras?.msg || 'Failed to update meeting links');
+                }
             })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'Something went wrong');
+            });
     };
 
     return (
@@ -54,20 +55,7 @@ export default function Links({ selectedClientData }) {
             <Title>Meeting Links</Title>
             <FormContainer onSubmit={handleSave}>
                 <FormGroup>
-                    <Label htmlFor="dropdown">Meeting links</Label>
-                    <Select
-                        id="dropdown"
-                        name="dropdown"
-                        value={selectedLink}
-                        onChange={(e) => handleLinkSelection(e.target.value)}
-                    >
-                        <option value="">Select an option</option>
-                        <option value="Zoom">Zoom meets</option>
-                        <option value="Google">Google meet</option>
-                    </Select>
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor="Meeting_links">Zoom_Meet_Link</Label>
+                    <Label htmlFor="Zoom_Meet_Link">Zoom Meet Link</Label>
                     <Input
                         type="text"
                         id="Zoom_Meet_Link"
@@ -77,7 +65,7 @@ export default function Links({ selectedClientData }) {
                     />
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="name">Google_Meet_Link</Label>
+                    <Label htmlFor="Google_Meet_Link">Google Meet Link</Label>
                     <Input
                         type="text"
                         id="Google_Meet_Link"
@@ -86,7 +74,7 @@ export default function Links({ selectedClientData }) {
                         onChange={(e) => handleChange("Google_Meet_Link", e.target.value)}
                     />
                 </FormGroup>
-                <Button >Save</Button>
+                <Button type="submit">Save</Button>
             </FormContainer>
         </Container>
     );
@@ -126,24 +114,6 @@ const Label = styled.label`
     color: ${colors.black};
 `;
 
-const Select = styled.select`
-    width: 75%;
-    padding: 10px;
-    border: 1px solid ${colors.gray}; 
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 14px;
-    cursor: pointer; 
-    &:focus {
-        outline: none; 
-        border-color: ${colors.primary}; 
-    }
-    &:hover {
-        border-color: ${colors.primary}; 
-    }
-    margin-right: 10px 
-`;
-
 const Input = styled.input`
     width: 75%;
     padding: 10px;
@@ -159,7 +129,7 @@ const Input = styled.input`
     &:hover {
         border-color: ${colors.primary}; 
     }
-    margin-right: 10px 
+    margin-right: 10px;
 `;
 
 const Button = styled.button`
@@ -173,5 +143,5 @@ const Button = styled.button`
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    align-self: center
+    align-self: center;
 `;

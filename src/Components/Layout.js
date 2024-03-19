@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
 import { fetchPostData } from '../helper/helper';
@@ -9,11 +9,15 @@ const data = [1, 2];
 export default function Layout({ selectedClientData }) {
   const [selectedLayout, setSelectedLayout] = useState(selectedClientData.Layout_Type || 1);
 
+  useEffect(() => {
+    setSelectedLayout(selectedClientData.Layout_Type || 1);
+  }, [selectedClientData])
+
   const handleLayoutChange = (item) => {
     setSelectedLayout(item);
   };
-  const handleSave = () => {
 
+  const handleSave = () => {
     const request = {
       ClientID: selectedClientData.ClientID,
       Layout_Type: selectedLayout
@@ -78,7 +82,6 @@ const LayoutContainer = styled.div`
 display: flex;
 width: 100%;
 margin-top: 20px;
-  
 `;
 
 const LayoutItem = styled.div`
