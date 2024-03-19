@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
+import colors from './colors';
+
 
 const roleLabels = [
     { id: 'WetherClients', title: 'Clients' },
@@ -45,7 +47,7 @@ function CreateUser(props) {
 
     useEffect(() => {
         getClentData()
-    },[])
+    }, [])
 
     const handleAllClientsCheckboxChange = (event) => {
         const isChecked = event.target.checked;
@@ -293,13 +295,30 @@ const SelectInput = styled.select`
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 25px;
-`;
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
+   `;
 
 const Input = styled.input`
     width: 92%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 25px;
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const CheckboxContainer = styled.div`

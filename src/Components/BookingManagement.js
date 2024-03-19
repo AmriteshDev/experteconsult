@@ -216,6 +216,8 @@ const SectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 20px;
+  background-color: #f5f5f5;
+
 `;
 
 const Title = styled.h1`

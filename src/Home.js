@@ -20,7 +20,7 @@ const Home = () => {
 
     const getList = async () => {
         try {
-            
+
             var request = {
                 Skip: 0,
                 Limit: 100,
