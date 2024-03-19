@@ -49,6 +49,10 @@ const Container = styled.div`
     align-items: center;
     flex-direction: column;
     display: flex;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
     .quill{
         width: 100%
     }

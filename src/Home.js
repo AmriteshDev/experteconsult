@@ -65,38 +65,40 @@ const Home = () => {
     return (
         <Container>
             <HomeWrapper>
-                <HomeRow>
-                    <HomeCell flex={0.3}>S.no</HomeCell>
-                    <HomeCell flex={1}>Name</HomeCell>
-                    <HomeCell flex={1}>Phone</HomeCell>
-                    <HomeCell flex={1}>Email</HomeCell>
-                    <HomeCell flex={0.4}>Type</HomeCell>
-                    <HomeCell flex={0.3}>Status</HomeCell>
-                    <HomeCell flex={0.3}>Action</HomeCell>
-                </HomeRow>
+                <TableContainer>
+                    <HomeRow>
+                        <HomeCell flex={0.3}>S.no</HomeCell>
+                        <HomeCell flex={1}>Name</HomeCell>
+                        <HomeCell flex={1}>Phone</HomeCell>
+                        <HomeCell flex={1}>Email</HomeCell>
+                        <HomeCell flex={0.4}>Type</HomeCell>
+                        <HomeCell flex={0.3}>Status</HomeCell>
+                        <HomeCell flex={0.3}>Action</HomeCell>
+                    </HomeRow>
 
-                {list.map((item, index) => {
-                    optionsRefs.current[index] = optionsRefs.current[index] || React.createRef();
-                    return (
-                        <HomeRow key={index}>
-                            <HomeCell flex={0.3}>{index + 1}</HomeCell>
-                            <HomeCell flex={1}>{item.Name}</HomeCell>
-                            <HomeCell flex={1}>{item.PhoneNumber}</HomeCell>
-                            <HomeCell flex={1}>{item.EmailID}</HomeCell>
-                            <HomeCell flex={0.4}>{item.Role_Type}</HomeCell>
-                            <HomeCell flex={0.3}>{item.status ? 'Active' : 'Inactive'} </HomeCell>
-                            <HomeCell flex={0.3}>
-                                <Button ref={optionsRefs.current[index]} onClick={() => toggleOptions(index, optionsRefs.current[index])}>{"..."}</Button>
-                                {selectedOptionIndex === index && (
-                                    <OptionsWrapper style={{ top: optionPosition.top }}>
-                                        <Option onClick={() => { }}>Update</Option>
-                                        <Option onClick={() => console.log('clicked on ..')}>{item.Status ? "Inactive" : "Active"}</Option>
-                                    </OptionsWrapper>
-                                )}
-                            </HomeCell>
-                        </HomeRow>
-                    );
-                })}
+                    {list.map((item, index) => {
+                        optionsRefs.current[index] = optionsRefs.current[index] || React.createRef();
+                        return (
+                            <HomeRow key={index}>
+                                <HomeCell flex={0.3}>{index + 1}</HomeCell>
+                                <HomeCell flex={1}>{item.Name}</HomeCell>
+                                <HomeCell flex={1}>{item.PhoneNumber}</HomeCell>
+                                <HomeCell flex={1}>{item.EmailID}</HomeCell>
+                                <HomeCell flex={0.4}>{item.Role_Type}</HomeCell>
+                                <HomeCell flex={0.3}>{item.status ? 'Active' : 'Inactive'} </HomeCell>
+                                <HomeCell flex={0.3}>
+                                    <Button ref={optionsRefs.current[index]} onClick={() => toggleOptions(index, optionsRefs.current[index])}>{"..."}</Button>
+                                    {selectedOptionIndex === index && (
+                                        <OptionsWrapper style={{ top: optionPosition.top }}>
+                                            <Option onClick={() => { }}>Update</Option>
+                                            <Option onClick={() => console.log('clicked on ..')}>{item.Status ? "Inactive" : "Active"}</Option>
+                                        </OptionsWrapper>
+                                    )}
+                                </HomeCell>
+                            </HomeRow>
+                        );
+                    })}
+                </TableContainer>
             </HomeWrapper>
             <CreateUser />
         </Container>
@@ -149,4 +151,16 @@ const Button = styled.button`
   transform: rotate(90deg);
   border: none;
   cursor: pointer;
+`;
+
+const TableContainer = styled.div`
+    width: 95%;
+    margin: 20px auto;
+    align-items: center;
+    // flex-direction: column;
+    // display: flex;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
