@@ -4,26 +4,22 @@ import styled from 'styled-components';
 import LogoIcon from '../assets/images/logo.webp';
 import { TbLogout } from "react-icons/tb";
 import { fetchPostData } from '../helper/helper';
+import Client from '../Client';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [clientList, setClientList] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null); // State to store selected client details
+  const [selectedClient, setSelectedClient] = useState(null);
   const ProfileData = JSON.parse(localStorage.getItem('ProfileData')) || {};
 
   const logOut = () => {
     localStorage.removeItem("ProfileData");
-    window.location.href = "/"; // Redirect to the home page
+    window.location.href = "/";
   };
 
   const handleClientSelect = (client) => {
+    console.log('client ===>>> ', client)
     setSelectedClient(client);
-    localStorage.setItem("selectedClientData", client)
-    if (client) {
-      navigate('/client')
-    } else {
-      navigate('')
-    }
   };
 
   const fetchClientData = () => {
@@ -67,22 +63,7 @@ const Navbar = () => {
       <NavItems>
         {ProfileData && selectedClient &&
           <>
-            {selectedClient ?
-              <NavItem to="/client">Clients</NavItem>
-              :
-              <>
-                <NavItem to="/">Home</NavItem>
-                <NavItem to="/client">Clients</NavItem>
-              </>
-            }
-            <NavItem to="/banner">Banner</NavItem>
-            <NavItem to="/meeting">Meeting</NavItem>
-            <NavItem to="/payment">Payment</NavItem>
-            <NavItem to="/booking">Booking</NavItem>
-            <NavItem to="/documents">Documents</NavItem>
-            <NavItem to="/customers">Customers</NavItem>
-            <NavItem to="/contact">Contact Me</NavItem>
-            <NavItem to="/about">About Us</NavItem>
+            <Client details={selectedClient}/>
             <NavItem onClick={() => setSelectedClient(null)} to="/">Back to admin</NavItem>
           </>
         }

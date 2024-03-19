@@ -24,12 +24,7 @@ const Login = (props) => {
             const userDetail = data.extras.AdminData
             localStorage.setItem('ProfileData', JSON.stringify(userDetail));
 
-            if (userDetail.Role_Type === 1) {
-                window.location.href = '/home'
-            } else if (userDetail.Role_Type === 2) {
-                window.location.href = '/client'
-            }
-
+            window.location.href = '/'
         } catch (error) {
             console.error('Error:', error);
         }

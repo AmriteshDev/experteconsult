@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import BasicInfo from './Components/BasicInfo';
 import Payment from './Components/Payment';
@@ -14,28 +14,26 @@ import AboutUs from './Components/AboutUs';
 import ContactUs from './Components/ContactUs';
 import colors from '../src/Components/colors';
 
+export default function Client(props) {
+ 
+  let selectedClientData = props.details ? JSON.parse(props.details) : ''
 
-let selectedClientData = localStorage.getItem("selectedClientData");
-selectedClientData = JSON.parse(selectedClientData);
-console.log("selectedClientData====>", selectedClientData)
+  console.log('props.selectedClientData ===>>> ', selectedClientData)
 
-const steps = [
-  { title: 'Basic Info', component: <BasicInfo selectedClientData={selectedClientData} /> },
-  { title: 'Layout', component: <Layout selectedClientData={selectedClientData} /> },
-  { title: 'Input', component: <LayoutInputForm selectedClientData={selectedClientData} /> },
-  { title: 'Links', component: <Links selectedClientData={selectedClientData} /> },
-  // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
-  { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
-  // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
-  { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
-  { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
-  { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
-  { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
-
-];
-
-export default function Client() {
-
+    const steps = [
+      { title: 'Basic Info', component: <BasicInfo selectedClientData={selectedClientData} /> },
+      { title: 'Layout', component: <Layout selectedClientData={selectedClientData} /> },
+      { title: 'Input', component: <LayoutInputForm selectedClientData={selectedClientData} /> },
+      { title: 'Links', component: <Links selectedClientData={selectedClientData} /> },
+      // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
+      { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
+      // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
+      { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
+      { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
+      { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
+      { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
+    
+    ];
 
   return (
     <Container>
