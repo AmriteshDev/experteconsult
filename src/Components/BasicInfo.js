@@ -6,23 +6,19 @@ import { toast } from 'react-toastify';
 
 export default function BasicInfo({ selectedClientData }) {
 
-    const [formData, setFormData] = useState({});
-
-    useEffect(() => {
-        setFormData({
-            Client_Code: selectedClientData.Client_Code || '',
-            Name: selectedClientData.Name || '',
-            PhoneNumber: selectedClientData.PhoneNumber || '',
-            EmailID: selectedClientData.EmailID || '',
-            Facebook_Link: selectedClientData.Facebook_Link || '',
-            Instagram_Link: selectedClientData.Instagram_Link || '',
-            Twitter_Link: selectedClientData.Twitter_Link || '',
-            ClientID: selectedClientData.ClientID,
-            Plan_Type: selectedClientData.Plan_Type,
-            Plan_Price: selectedClientData.Plan_Price,
-            Discount: selectedClientData.Discount,
-        })
-    }, [selectedClientData])
+    const [formData, setFormData] = useState({
+        Client_Code: selectedClientData.Client_Code || '',
+        Name: selectedClientData.Name || '',
+        PhoneNumber: selectedClientData.PhoneNumber || '',
+        EmailID: selectedClientData.EmailID || '',
+        Facebook_Link: selectedClientData.Facebook_Link || '',
+        Instagram_Link: selectedClientData.Instagram_Link || '',
+        Twitter_Link: selectedClientData.Twitter_Link || '',
+        ClientID: selectedClientData.ClientID,
+        Plan_Type: selectedClientData.Plan_Type,
+        Plan_Price: selectedClientData.Plan_Price,
+        Discount: selectedClientData.Discount,
+    });
 
     const handleForm = (key, value) => {
         setFormData({
@@ -60,7 +56,6 @@ export default function BasicInfo({ selectedClientData }) {
                 toast.error(error?.response?.data?.extras.msg || 'something went wrong');
             });
     };
-
     return (
         <Container>
             <Title>Basic Informations</Title>
@@ -123,13 +118,15 @@ const FormContainer = styled.div`
 `;
 
 const FormGroup = styled.div`
-    margin-bottom: 20px;
+       display: flex;
+       align-items: center;
+       margin-bottom: 20px
 `;
 
 const Label = styled.label`
-    // text-align: left;
+    text-align: left;
     color: ${colors.black};
-    margin-right: 30px
+    min-width: 100px;
 `;
 
 const InputField = styled.input`

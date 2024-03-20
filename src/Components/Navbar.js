@@ -6,6 +6,8 @@ import { TbLogout } from "react-icons/tb";
 import { fetchPostData } from '../helper/helper';
 import Client from '../Client';
 import Home from '../Home';
+import colors from './colors';
+
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -61,12 +63,12 @@ const Navbar = () => {
         <LogoWrapper>
           <Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
           <ClientSelect>
-            <select onChange={(e) => handleClientSelect(e.target.value)}>
+            <Select onChange={(e) => handleClientSelect(e.target.value)}>
               <option value="">Select Client</option>
               {clientList.map(client => (
                 <option key={client.ClientID} value={JSON.stringify(client)}>{client.EmailID}</option>
               ))}
-            </select>
+            </Select>
           </ClientSelect>
         </LogoWrapper>
         <NavItems>
@@ -108,8 +110,8 @@ const Logo = styled.div`
 
 const ClientSelect = styled.div`
   select {
-    width: 200px;
-    height: 30px;
+    width: 230px;
+    height: 35px;
   }
 `;
 
@@ -125,3 +127,17 @@ const NavItem = styled(Link)`
     color: ${props => props.theme.accent};
 	}
 `;
+const Select = styled.select`
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
+   `;

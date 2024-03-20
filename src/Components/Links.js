@@ -106,6 +106,9 @@ const FormContainer = styled.form`
 const FormGroup = styled.div`
     width: 100%;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
 `;
 
 const Label = styled.label`
