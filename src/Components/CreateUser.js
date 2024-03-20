@@ -272,7 +272,7 @@ function CreateUser(props) {
 export default CreateUser;
 
 const FormContainer = styled.div`
-  margin: 2%;
+  margin: 20px;
   padding: 10px;
   background-color: #f9f9f9;
   border-radius: 8px;

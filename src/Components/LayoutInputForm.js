@@ -176,12 +176,24 @@ const Input = styled.input`
 `;
 
 const Textarea = styled.textarea`
+    
+    resize: vertical;
     padding: 8px;
     border: 1px solid ${colors.gray};
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
-    resize: vertical;
+    background-color: white; 
+    color: ${colors.black}; 
+    cursor: pointer; 
+    &:focus {
+        outline: none; 
+        border-color: ${colors.primary}; 
+    }
+    &:hover {
+        border-color: ${colors.primary}; 
+    }
+    margin-right: 10px 
 `;
 
 const Button = styled.button`
