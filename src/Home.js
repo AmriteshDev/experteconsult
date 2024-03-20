@@ -107,19 +107,16 @@ const Home = () => {
 
 export default Home;
 
-const OptionsWrapper = styled.div`
-    position: absolute;
-    z-index: 1;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    flex-direction: column; 
-    right: calc(30% + 55px);
-`
-// const Option = styled.div`
-//     padding: 8px;
-//     cursor: pointer;
+// const OptionsWrapper = styled.div`
+//     position: absolute;
+//     z-index: 1;
+//     background-color: #fff;
+//     border: 1px solid #ccc;
+//     border-radius: 5px;
+//     flex-direction: column; 
+//     right: calc(30% + 55px);
 // `
+
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -189,15 +186,15 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-// const OptionsWrapper = styled.div`
-//   position: absolute;
-//   top: ${props => props.top}px;
-//   left: calc(100% - 150px);
-//   background-color: #fff;
-//   border: 1px solid #ccc;
-//   border-radius: 5px;
-//   padding: 5px;
-// `;
+const OptionsWrapper = styled.div`
+  position: absolute;
+  top: ${props => props.top}px;
+  left: calc(100% - 150px);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+`;
 
 const Option = styled.div`
   padding: 5px;
