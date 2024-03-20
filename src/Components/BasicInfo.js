@@ -6,19 +6,23 @@ import { toast } from 'react-toastify';
 
 export default function BasicInfo({ selectedClientData }) {
 
-    const [formData, setFormData] = useState({
-        Client_Code: selectedClientData.Client_Code || '',
-        Name: selectedClientData.Name || '',
-        PhoneNumber: selectedClientData.PhoneNumber || '',
-        EmailID: selectedClientData.EmailID || '',
-        Facebook_Link: selectedClientData.Facebook_Link || '',
-        Instagram_Link: selectedClientData.Instagram_Link || '',
-        Twitter_Link: selectedClientData.Twitter_Link || '',
-        ClientID: selectedClientData.ClientID,
-        Plan_Type: selectedClientData.Plan_Type,
-        Plan_Price: selectedClientData.Plan_Price,
-        Discount: selectedClientData.Discount,
-    });
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        setFormData({
+            Client_Code: selectedClientData.Client_Code || '',
+            Name: selectedClientData.Name || '',
+            PhoneNumber: selectedClientData.PhoneNumber || '',
+            EmailID: selectedClientData.EmailID || '',
+            Facebook_Link: selectedClientData.Facebook_Link || '',
+            Instagram_Link: selectedClientData.Instagram_Link || '',
+            Twitter_Link: selectedClientData.Twitter_Link || '',
+            ClientID: selectedClientData.ClientID,
+            Plan_Type: selectedClientData.Plan_Type,
+            Plan_Price: selectedClientData.Plan_Price,
+            Discount: selectedClientData.Discount,
+        })
+    }, [selectedClientData])
 
     const handleForm = (key, value) => {
         setFormData({
