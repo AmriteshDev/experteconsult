@@ -64,29 +64,29 @@ const Home = () => {
 
     return (
         <Container>
-            <HomeWrapper>
+            <TableWrapper>
                 <TableContainer>
-                    <HomeRow>
-                        <HomeCell flex={0.3}>S.no</HomeCell>
-                        <HomeCell flex={1}>Name</HomeCell>
-                        <HomeCell flex={1}>Phone</HomeCell>
-                        <HomeCell flex={1}>Email</HomeCell>
-                        <HomeCell flex={0.4}>Type</HomeCell>
-                        <HomeCell flex={0.3}>Status</HomeCell>
-                        <HomeCell flex={0.3}>Action</HomeCell>
-                    </HomeRow>
+                    <TableRowHeading>
+                        <HeadingCell flex={0.2}>S.no</HeadingCell>
+                        <HeadingCell flex={1}>Name</HeadingCell>
+                        <HeadingCell flex={1}>Phone</HeadingCell>
+                        <HeadingCell flex={1}>Email</HeadingCell>
+                        <HeadingCell flex={0.3}>Type</HeadingCell>
+                        <HeadingCell flex={0.2}>Status</HeadingCell>
+                        <HeadingCell flex={0.2}>Action</HeadingCell>
+                    </TableRowHeading>
 
                     {list.map((item, index) => {
                         optionsRefs.current[index] = optionsRefs.current[index] || React.createRef();
                         return (
-                            <HomeRow key={index}>
-                                <HomeCell flex={0.3}>{index + 1}</HomeCell>
-                                <HomeCell flex={1}>{item.Name}</HomeCell>
-                                <HomeCell flex={1}>{item.PhoneNumber}</HomeCell>
-                                <HomeCell flex={1}>{item.EmailID}</HomeCell>
-                                <HomeCell flex={0.4}>{item.Role_Type}</HomeCell>
-                                <HomeCell flex={0.3}>{item.status ? 'Active' : 'Inactive'} </HomeCell>
-                                <HomeCell flex={0.3}>
+                            <TableRow key={index}>
+                                <TableDataCell flex={0.2}>{index + 1}</TableDataCell>
+                                <TableDataCell flex={1}>{item.Name}</TableDataCell>
+                                <TableDataCell flex={1}>{item.PhoneNumber}</TableDataCell>
+                                <TableDataCell flex={1}>{item.EmailID}</TableDataCell>
+                                <TableDataCell flex={0.3}>{item.Role_Type}</TableDataCell>
+                                <TableDataCell flex={0.2}>{item.status ? 'Active' : 'Inactive'} </TableDataCell>
+                                <TableDataCell flex={0.2}>
                                     <Button ref={optionsRefs.current[index]} onClick={() => toggleOptions(index, optionsRefs.current[index])}>{"..."}</Button>
                                     {selectedOptionIndex === index && (
                                         <OptionsWrapper style={{ top: optionPosition.top }}>
@@ -94,12 +94,12 @@ const Home = () => {
                                             <Option onClick={() => console.log('clicked on ..')}>{item.Status ? "Inactive" : "Active"}</Option>
                                         </OptionsWrapper>
                                     )}
-                                </HomeCell>
-                            </HomeRow>
+                                </TableDataCell>
+                            </TableRow>
                         );
                     })}
                 </TableContainer>
-            </HomeWrapper>
+            </TableWrapper>
             <CreateUser />
         </Container>
     );
@@ -107,15 +107,15 @@ const Home = () => {
 
 export default Home;
 
-// const OptionsWrapper = styled.div`
-//     position: absolute;
-//     z-index: 1;
-//     background-color: #fff;
-//     border: 1px solid #ccc;
-//     border-radius: 5px;
-//     flex-direction: column; 
-//     right: calc(30% + 55px);
-// `
+const OptionsWrapper = styled.div`
+    position: absolute;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex-direction: column; 
+    right: calc(30% + 55px);
+`
 
 const Container = styled.div`
   width: 100%;
@@ -123,32 +123,9 @@ const Container = styled.div`
   flex-direction: row;
 `;
 
-const HomeWrapper = styled.div`
+const TableWrapper = styled.div`
   width: 70%;
 `;
-
-// const HomeRow = styled.div`
-//   display: flex;
-//   flex-direction: row;
-//   margin: 3%;
-// `;
-
-// const HomeCell = styled.div`
-//   flex: ${props => props.flex || 'initial'};
-//   text-align: left;
-//   background-color: ${props => props.backgroundColor || '#fff'};
-//   padding-top: 5px;
-//   padding-bottom: 5px;
-// `;
-
-// const Button = styled.button`
-//   margin-left: 5px;
-//   background-color: white;
-//   color: black;
-//   transform: rotate(90deg);
-//   border: none;
-//   cursor: pointer;
-// `;
 
 const TableContainer = styled.div`
     width: 95%;
@@ -161,39 +138,33 @@ const TableContainer = styled.div`
     overflow: hidden;
 `;
 
+const TableRowHeading = styled.div`
+  display: flex;
+  border-bottom: 2px solid black;
+`;
 
-
-
-// const TableContainer = styled.div`
-//   border: 1px solid #ccc;
-//   border-radius: 5px;
-//   overflow: hidden;
-// `;
-
-const HomeRow = styled.div`
+const TableRow = styled.div`
   display: flex;
   border-bottom: 1px solid #ccc;
 `;
 
-const HomeCell = styled.div`
+
+const TableDataCell = styled.div`
   flex: ${props => props.flex};
   padding: 10px;
+`;
+
+const HeadingCell = styled.div`
+  flex: ${props => props.flex};
+  padding: 10px;
+  font-color:black;
+  font-weight:600
 `;
 
 const Button = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
-`;
-
-const OptionsWrapper = styled.div`
-  position: absolute;
-  top: ${props => props.top}px;
-  left: calc(100% - 150px);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px;
 `;
 
 const Option = styled.div`

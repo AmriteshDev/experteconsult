@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 import colors from './colors';
@@ -8,12 +8,21 @@ import { fetchPostData } from '../helper/helper';
 const BookingManagement = ({ selectedClientData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-  const [createBookingFormData, setCreateBookingFormData] = useState({
-    Title: "",
-    Description: "",
-    ClientID: selectedClientData.ClientID,
-  });
+  const [createBookingFormData, setCreateBookingFormData] = useState({});
 
+  useEffect(() => {
+    setCreateBookingFormData({
+      Title: "",
+      Description: "",
+      Option: "",
+      Description: "",
+      ClientID: selectedClientData.ClientID,
+      Name: selectedClientData.Name,
+      EmailID: selectedClientData.EmailID,
+      PhoneNumber: selectedClientData.PhoneNumber,
+      // Meeting_Date_Time: "2024-03-10T06:42:07.133Z"
+    })
+  }, [selectedClientData])
   const bookingDetails = ["Id", "Name", "Phone", "Email", "Status", "Type"];
   const openPopup = () => {
     setIsPopupOpen(true);
@@ -30,10 +39,6 @@ const BookingManagement = ({ selectedClientData }) => {
     });
   };
 
-  const handleOptionChange = (value) => {
-    setSelectedOption(value);
-  };
-
   const handleCreateBooking = (e) => {
     e.preventDefault();
 
@@ -41,9 +46,13 @@ const BookingManagement = ({ selectedClientData }) => {
       Title: createBookingFormData.Title,
       Description: createBookingFormData.Description,
       ClientID: createBookingFormData.ClientID,
+      Option: createBookingFormData.Option,
+      Name: createBookingFormData.Name,
+      EmailID: createBookingFormData.EmailID,
+      PhoneNumber: createBookingFormData.PhoneNumber,
     };
 
-    fetchPostData('/Create_Client_Booking_Management', request)
+    fetchPostData('/Book_Meeting', request)
       .then(response => {
         if (response.success) {
           toast.success(response.extras.Status || 'Added Successfully');
@@ -65,11 +74,11 @@ const BookingManagement = ({ selectedClientData }) => {
         <SectionContainer>
           <Title>Create Booking</Title>
           <InputContainer>
-            <label>Title:</label>
+            <Label>Title:</Label>
             <TextInput name="Title" onChange={(e) => handleBooking("Title", e.target.value)} value={createBookingFormData.Title} placeholder="Enter Title" />
           </InputContainer>
           <InputContainer>
-            <label>Description:</label>
+            <Label>Description:</Label>
             <TextArea name='Description' onChange={(e) => handleBooking("Description", e.target.value)} value={createBookingFormData.Description} placeholder="Enter Your Description" rows={3} />
           </InputContainer>
           <h4>When You are available for this booking?</h4>
@@ -78,18 +87,19 @@ const BookingManagement = ({ selectedClientData }) => {
               <RadioButtonLabel key={option.value}>
                 <RadioButton
                   type="radio"
+                  name='Option'
                   value={option.value}
-                  checked={selectedOption === option.value}
-                  onChange={() => handleOptionChange(option.value)}
+                  checked={createBookingFormData.Option === option.value}
+                  onChange={(e) => handleBooking("Option", e.target.value)}
                 />
                 {option.title} - {option.description}
               </RadioButtonLabel>
             ))}
           </RadioButtonContainer>
-          <div>
-            <Button onClick={handleCreateBooking}>Create Booking</Button>
-            <StyledCancelButton onClick={closePopup}>Cancel</StyledCancelButton>
-          </div>
+          <ButtonContainer>
+            <button onClick={handleCreateBooking}>Create Booking</button>
+            <button onClick={closePopup}>Cancel</button>
+          </ButtonContainer>
         </SectionContainer>
       </MaxWidthPopup>
 
@@ -139,7 +149,7 @@ const MaxWidthPopup = ({ isOpen, onClose, children }) => {
       contentLabel="Max Width Popup"
       style={{
         content: {
-          maxWidth: '80%',
+          maxWidth: '75%',
           margin: 'auto',
           backgroundColor: '#f7f7f7',
         },
@@ -152,7 +162,6 @@ const MaxWidthPopup = ({ isOpen, onClose, children }) => {
 
 
 
-// Styled components for BookingManagement
 const Container = styled.div`
 width: 95%;
 margin: 20px auto;
@@ -164,8 +173,6 @@ padding: 20px;
 border-radius: 8px;
 box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 `;
-
-
 
 const TableContainer = styled.div`
   display: flex;
@@ -199,6 +206,11 @@ const Text = styled.span`
   font-weight: bold;
 `;
 
+const Label = styled.label`
+    text-align: left;
+    color: ${colors.black};
+    min-width: 100px;
+`;
 const Button = styled.button`
   background-color: ${colors.primary};
   color: ${colors.white};
@@ -217,33 +229,54 @@ const SectionContainer = styled.div`
   flex-direction: column;
   margin-top: 20px;
   background-color: #f5f5f5;
-
+ 
 `;
 
 const Title = styled.h1`
     color: ${colors.black};
+    align-self: center;
+
 `;
 
 const InputContainer = styled.div`
   display: flex;
-  flex-direction: column;
   margin-bottom: 10px;
 `;
 
 const TextInput = styled.input`
-  flex: 1;
-  border: 1px solid ${colors.gray};
+  width: 75%;
+  padding: 10px;
+  border: 1px solid ${colors.gray}; 
   border-radius: 4px;
-  padding: 8px;
-  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+  cursor: pointer; 
+  &:focus {
+      outline: none; 
+      border-color: ${colors.primary}; 
+  }
+  &:hover {
+      border-color: ${colors.primary}; 
+  }
+  margin-right: 10px 
 `;
 
 const TextArea = styled.textarea`
-  flex: 1;
-  border: 1px solid ${colors.gray};
+  width: 75%;
+  padding: 10px;
+  border: 1px solid ${colors.gray}; 
   border-radius: 4px;
-  padding: 8px;
-  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+  cursor: pointer; 
+  &:focus {
+      outline: none; 
+      border-color: ${colors.primary}; 
+  }
+  &:hover {
+      border-color: ${colors.primary}; 
+  }
+  margin-right: 10px 
 `;
 
 const RadioButtonContainer = styled.div`
@@ -263,10 +296,34 @@ const RadioButton = styled.input`
 `;
 
 
-const StyledCancelButton = styled(Button)`
-  background-color: red;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 
-  &:hover {
-    background-color: ${colors.redDark};
+  button:first-child {
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    max-width: 150px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+ 
+  button:last-child {
+    background-color: red;
+    color: ${colors.white};
+    max-width: 150px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
   }
 `;
