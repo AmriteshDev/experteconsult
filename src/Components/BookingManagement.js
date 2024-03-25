@@ -8,47 +8,35 @@ import BookingPopup from './BookingPopup';
 
 const BookingManagement = ({ selectedClientData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [createBookingFormData] = useState({});
   const [isOpen, setIsOpen] = useState(false)
   const [onClose, setOnClose] = useState(false)
-
-
-  const bookingDetails = ["Id", "Name", "Phone", "Email", "Status", "Type"];
-  const openPopup = () => {
-    setIsPopupOpen(true);
-  };
-
-  const closePopup = () => {
-    setIsPopupOpen(false);
-  };
-
-
+  const [bookings, setBookings] = useState([])
 
   const handleCreateBooking = (e) => {
-    e.preventDefault();
+  };
 
+  useEffect(() => {
+    console.log('selectedClientData ===>>> ', selectedClientData)
     const request = {
-      Title: createBookingFormData.Title,
-      Description: createBookingFormData.Description,
-      ClientID: createBookingFormData.ClientID,
-      Option: createBookingFormData.Option,
-      Name: createBookingFormData.Name,
-      EmailID: createBookingFormData.EmailID,
-      PhoneNumber: createBookingFormData.PhoneNumber,
-    };
-
-    fetchPostData('/Book_Meeting', request)
+      "ClientID": selectedClientData.ClientID,
+      "Skip": 0,
+      "Limit": 10,
+      "Whether_Status_Filter": false,
+      "Status": false,
+      "Whether_Search_Filter": false,
+      "Search": ""
+    }
+    fetchPostData('/Filter_All_Client_Booking_Managements', request)
       .then(response => {
+        console.log("response===>", response)
         if (response.success) {
-          toast.success(response.extras.Status || 'Added Successfully');
-          console.log("request===>", response)
+          setBookings(response.extras.Data)
         }
       })
       .catch(error => {
         toast.error(error?.response?.data?.extras.msg || 'something went wrong');
       });
-  };
-
+  }, [])
 
 
 
@@ -60,25 +48,21 @@ const BookingManagement = ({ selectedClientData }) => {
           <TableRow>
             <TableHeaderCell flex={0.3} borderRadius="top-left"><Text>S.no</Text></TableHeaderCell>
             <TableHeaderCell flex={0.4}><Text>Id</Text></TableHeaderCell>
-            <TableHeaderCell flex={1}><Text>Name</Text></TableHeaderCell>
-            <TableHeaderCell flex={1}><Text>Phone</Text></TableHeaderCell>
-            <TableHeaderCell flex={1}><Text>Email</Text></TableHeaderCell>
-            <TableHeaderCell flex={0.4}><Text>Type</Text></TableHeaderCell>
+            <TableHeaderCell flex={1}><Text>Title</Text></TableHeaderCell>
             <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Status</Text></TableHeaderCell>
+            <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Action</Text></TableHeaderCell>
           </TableRow>
-          {/* {
-          bookingDetails && bookingDetails.map((item, index) => (
-            <div key={index}>
-              <div>{item.index + 1}</div>
-              <div>{item.Id}</div>
-              <div>{item.Name}</div>
-              <div>{item.Phone}</div>
-              <div>{item.Email}</div>
-              <div>{item.Type}</div>
-              <div>{item.Status}</div>
-            </div>
-          ))
-        } */}
+          {
+            bookings && bookings.map((item, index) => (
+              <TableRow key={index}>
+                <TableColumnCell>{index + 1}</TableColumnCell>
+                <TableColumnCell>{item.Client_Booking_ManagmentID || ''}</TableColumnCell>
+                <TableColumnCell>{item.Title || ''}</TableColumnCell>
+                <TableColumnCell>{item.Status || ''}</TableColumnCell>
+                <TableColumnCell><button>Edit</button></TableColumnCell>
+              </TableRow>
+            ))
+          }
           <TableFooter />
         </TableContainer>
 
@@ -97,7 +81,7 @@ const BookingManagement = ({ selectedClientData }) => {
           },
         }}
       >
-        <BookingPopup closePopup={() => setIsOpen(false)} isPopupOpen={isPopupOpen} handleCreateBooking={handleCreateBooking} />
+        <BookingPopup closePopup={() => setIsOpen(false)} isPopupOpen={isPopupOpen} selectedClientData={selectedClientData} handleCreateBooking={handleCreateBooking} />
       </Modal>
     </>
   );
@@ -130,6 +114,13 @@ const TableRow = styled.div`
 `;
 
 const TableHeaderCell = styled.div`
+  flex: 1;
+  background-color: #f7f7f7;
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
+
+const TableColumnCell = styled.div`
   flex: 1;
   background-color: #f7f7f7;
   padding-top: 5px;

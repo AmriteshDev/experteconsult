@@ -1,19 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
 import SpecificDate from './SpecificDate';
-import { toast } from 'react-toastify';
 
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export default function BookingAvailability({ createBookingFormData, handleBooking }) {
+export default function BookingAvailability({ createBookingFormData, choosenSlots }) {
     const [selectedDays, setSelectedDays] = useState([]);
     const [timeSlots, setTimeSlots] = useState({});
-    const [inputsChanged, setInputsChanged] = useState(false);
-
-    useEffect(() => {
-        setInputsChanged(true);
-    }, [timeSlots]);
 
     const handleSelectedDays = (value) => {
         if (!selectedDays.includes(value)) {
@@ -68,26 +62,21 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
         return weeklySlotsArray;
     };
 
-    const validateTimeSlots = () => {
-        for (const day in timeSlots) {
-            const slots = timeSlots[day];
-            for (const slot of slots) {
-                if (!slot.From_Time || !slot.To_Time) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    const generateSpecificSlotsArray = () => {
+        const specificSlotsArray = [];
+        selectedDays.forEach(day => {
+            const timeSlotsForDay = timeSlots[day] || [];
+            specificSlotsArray.push({
+                Date: day,
+                Time_Slots: timeSlotsForDay
+            });
+        });
+        return specificSlotsArray;
     };
 
     const handleSaveSlots = () => {
-        if (validateTimeSlots()) {
-            const slots = generateWeeklySlotsArray();
-            handleBooking("Weekly_Available_Slots_Array", slots);
-            setInputsChanged(false);
-        } else {
-            toast.error('Please fill in all time slots.');
-        }
+        const slots = createBookingFormData?.Option === 'weekly' ? generateWeeklySlotsArray() : generateSpecificSlotsArray();
+        choosenSlots({ Slots_Array: slots });
     };
 
     const renderTimeSlots = (day) => {
@@ -125,8 +114,8 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
 
     return (
         <Container>
-            {createBookingFormData?.Booking_Type === '1' ? (
-                <>
+            {createBookingFormData?.Option === 'weekly' ? (
+                <WeeklyAvailability>
                     {weekdays.map((day, index) => (
                         <DayWrapper key={day}>
                             <div style={{ width: "20%" }}>
@@ -148,16 +137,29 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
                                     <div>Unavailable</div>
                                 )}
                             </div>
-                            <hr></hr>
+                            <hr />
                         </DayWrapper>
                     ))}
-                    <SaveButton onClick={handleSaveSlots} disabled={!inputsChanged}>Save Slots</SaveButton>
-                </>
-            ) : createBookingFormData?.Booking_Type === '2' ? (
-                <SpecificDate isMulti={true} />
-            ) : (
-                ' '
-            )}
+                </WeeklyAvailability>
+            ) : createBookingFormData?.Option === 'specificDate' ? (
+                <SpecificDateAvailability>
+                    <SpecificDateSlots>
+                        <SpecificDate isMulti={true} />
+                    </SpecificDateSlots>
+                    {selectedDays.map(day => (
+                        <DayWrapper key={day}>
+                            <div>
+                                {day}
+                            </div>
+                            <div>
+                                {renderTimeSlots(day)}
+                            </div>
+                            <hr />
+                        </DayWrapper>
+                    ))}
+                </SpecificDateAvailability>
+            ) : null}
+            <SaveButton onClick={handleSaveSlots}>Save Slots</SaveButton>
         </Container>
     );
 }
@@ -170,55 +172,72 @@ const Container = styled.div`
   border-radius: 10px;
   background-color: ${colors.white};
 `;
+
+const WeeklyAvailability = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const SpecificDateAvailability = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const SpecificDateSlots = styled.div`
+  margin-bottom: 10px;
+`;
+
 const DayWrapper = styled.div`
-        display: flex;
-        margin-top: 15px;
-        div:first-of-type {
-            width: 30%;
-            display: inline;
-        }
-        div:not(:first-of-type) {
-            flex: 1;
-        }
+  display: flex;
+  margin-top: 15px;
+
+  div:first-of-type {
+    width: 30%;
+  }
+
+  div:not(:first-of-type) {
+    flex: 1;
+  }
 `;
+
 const Button = styled.button`
-    background-color: ${colors.primary};
-    color: ${colors.white};
-    padding: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    position: absolute;
-    right: 41px;
+  background-color: ${colors.primary};
+  color: ${colors.white};
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
 `;
+
 const SaveButton = styled.button`
-    background-color: ${colors.primary};
-    color: ${colors.white};
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-    opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
-    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  background-color: ${colors.primary};
+  color: ${colors.white};
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
 `;
 
 const TextInput = styled.input`
   width: 30%;
   padding: 10px;
-  border: 1px solid ${colors.gray}; 
+  border: 1px solid ${colors.gray};
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 14px;
-  cursor: pointer; 
+  cursor: pointer;
+
   &:focus {
-      outline: none; 
-      border-color: ${colors.primary}; 
+    outline: none;
+    border-color: ${colors.primary};
   }
+
   &:hover {
-      border-color: ${colors.primary}; 
+    border-color: ${colors.primary};
   }
-  margin-right: 10px ;
-  `;
+
+`;

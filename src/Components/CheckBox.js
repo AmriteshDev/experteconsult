@@ -1,61 +1,64 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import colors from './colors'
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import colors from './colors';
 
-export default function CheckBox({ id, title, description }) {
+export default function CheckBox({ initialValue, title, description, onChange }) {
+  const [checked, setChecked] = useState(initialValue);
 
-    const [isChecked, setIsChecked] = useState(false)
-    const handleCheckBox = () => {
-        console.log(id)
-        setIsChecked(!isChecked)
-    }
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked)
+    onChange(event.target.checked);
+  };
 
-    return (
-        <Container>
-            <input type='checkbox' id={id} value={isChecked} onChange={handleCheckBox} />
-            <Title>
-                {title}
-            </Title>
-            <Description>
-                {description}
-            </Description>
-        </Container>
-    )
+  return (
+    <CheckBoxContainer>
+      <CheckBoxWrapper>
+        <CheckBoxStyle
+          id={title}
+          type='checkbox'
+          checked={checked}
+          onChange={handleCheckboxChange}
+        />
+        <Label htmlFor={title}>{title}</Label>
+      </CheckBoxWrapper>
+      {description && <Description>{description}</Description>}
+    </CheckBoxContainer>
+  );
 }
 
-const Container = styled.div`
-  display: flex;
-  // flex-direction: column;
-  margin-top: 10px;
-  border-radius: 15px;
-  background-color: ${colors.white};
-
-`;
-const RadioButtonWrapper = styled.div`
+const CheckBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 5px;
-  padding: 9px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: ${colors.white};
+  margin-bottom: 10px;
 `;
-const RadioButtonRow = styled.div`
+
+const CheckBoxWrapper = styled.div`
   display: flex;
- 
 `;
 
-const RadioButton = styled.input`
+const CheckBoxStyle = styled.input`
   margin-right: 10px;
-  margin-top: -15px;
+  cursor: pointer;
+  &:focus {
+    outline: none;
+    border-color: ${colors.primary};
+  }
+  &:hover {
+    border-color: ${colors.primary};
+  }
 `;
 
-// const RadioButtonTitle = styled.div`
-//   font-weight: 600;
-// `;
-const Title = styled.h4`
-    color: ${colors.black};
+const Label = styled.label`
+  color: ${colors.black};
+  font-weight: 600;
+  cursor: pointer;
 `;
+
 const Description = styled.div`
-  margin-top: 5px;
+  margin-top: 7px;
+  margin-left: 5px;
 `;
-
-
-
