@@ -14,33 +14,37 @@ const options = [{ value: "1", title: 'Weekly', description: 'You are available 
 export default function BookingPopup(props) {
 
   const { closePopup, isPopupOpen, handleCreateBooking } = props
+
+  const selectedBooking = props.selectedBooking.length > 0 ? props.selectedBooking[0] : {}
+
   const [createBookingFormData, setCreateBookingFormData] = useState({
-    Title: "",
-    URL: "",
-    Description: "",
-    Duration: null,
-    Price: null,
-    Offer_Price: null,
-    Booking_Type: "",
-    Physical_Address: "",
-    PhoneNumber: "",
-    Far_Days_User_Can_Book: "",
-    Minimum_Meeting_Padding_Minutes: "",
-    Cannot_Schedule_Within_Hours: "",
-    Slot_Interval_Minutes: "",
-    Booking_Limit_Per_Day: "",
-    Multiple_Invites_For_Same_Booking: "",
-    Location_Type: "",
-    Weekly_Available_Slots_Array: [],
+    Title: selectedBooking.Title || "",
+    URL: selectedBooking.URL || "",
+    Description: selectedBooking.Description || "",
+    Duration: selectedBooking.Duration || null,
+    Price: selectedBooking.Price || null,
+    Offer_Price: selectedBooking.Offer_Price || null,
+    Booking_Type: selectedBooking?.Booking_Type?.toString() || "",
+    Physical_Address: selectedBooking.Physical_Address || "",
+    PhoneNumber: selectedBooking.PhoneNumber || "",
+    Far_Days_User_Can_Book: selectedBooking.Far_Days_User_Can_Book || "",
+    Minimum_Meeting_Padding_Minutes: selectedBooking.Minimum_Meeting_Padding_Minutes || "",
+    Cannot_Schedule_Within_Hours: selectedBooking.Cannot_Schedule_Within_Hours || "",
+    Slot_Interval_Minutes: selectedBooking.Slot_Interval_Minutes || "",
+    Booking_Limit_Per_Day: selectedBooking.Booking_Limit_Per_Day || null,
+    Multiple_Invites_For_Same_Booking: selectedBooking.Multiple_Invites_For_Same_Booking || "",
+    Location_Type: selectedBooking.Location_Type || "",
+    Weekly_Available_Slots_Array: selectedBooking.Weekly_Available_Slots_Array || [],
+    Specific_Dates_Available_Slots_Array: selectedBooking.Specific_Dates_Available_Slots_Array || [],
   })
   const [isHide, setIsHide] = useState(true);
-  const [selctedCheckBox, setSelectedCheckBox] = useState({
-    chargeForBooking: false,
-    Whether_Multiple_Invites_For_Same_Booking: false,
-    Whether_Offer_Price: false,
-    Whether_Booking_Limit_Per_Day: false,
-    unavaiableDetes: false,
 
+  const [selctedCheckBox, setSelectedCheckBox] = useState({
+    chargeForBooking: selectedBooking.chargeForBooking ?? false,
+    Whether_Multiple_Invites_For_Same_Booking: selectedBooking.Whether_Multiple_Invites_For_Same_Booking ?? false,
+    Whether_Offer_Price: selectedBooking.Whether_Offer_Price ?? false,
+    Whether_Booking_Limit_Per_Day: selectedBooking.Whether_Booking_Limit_Per_Day ?? false,
+    unavaiableDetes: selectedBooking.unavaiableDete ?? false,
   })
 
 
@@ -58,18 +62,15 @@ export default function BookingPopup(props) {
   }
 
   const handleBooking = (key, value) => {
-    console.log('key ===>>> ', key, 'value ===>>> ', value)
     setCreateBookingFormData({
       ...createBookingFormData,
       [key]: value
     });
   };
 
-  const handleSave = (e) => {
-    e.preventDefault();
-
+  const handleSave = (Client_Booking_ManagmentID) => {
+    let URL
     const request = {
-      ClientID: props.selectedClientData.ClientID,
       Title: createBookingFormData.Title,
       URL: createBookingFormData.URL,
       Description: createBookingFormData.Description,
@@ -83,21 +84,28 @@ export default function BookingPopup(props) {
       Minimum_Meeting_Padding_Minutes: parseInt(createBookingFormData.Minimum_Meeting_Padding_Minutes),
       Cannot_Schedule_Within_Hours: parseInt(createBookingFormData.Cannot_Schedule_Within_Hours),
       Slot_Interval_Minutes: parseInt(createBookingFormData.Slot_Interval_Minutes),
-      Booking_Limit_Per_Day: createBookingFormData.Booking_Limit_Per_Day,
+      Booking_Limit_Per_Day: parseInt(createBookingFormData.Booking_Limit_Per_Day),
       Whether_Multiple_Invites_For_Same_Booking: selctedCheckBox.Whether_Multiple_Invites_For_Same_Booking,
       Whether_Offer_Price: selctedCheckBox.Whether_Offer_Price,
       Whether_Booking_Limit_Per_Day: selctedCheckBox.Whether_Booking_Limit_Per_Day,
       Location_Type: parseInt(createBookingFormData.Location_Type),
       Weekly_Available_Slots_Array: createBookingFormData.Weekly_Available_Slots_Array,
+      Specific_Dates_Available_Slots_Array: createBookingFormData.Specific_Dates_Available_Slots_Array,
       Multiple_Invites_For_Same_Booking: 3,
     }
 
-    fetchPostData('/Create_Client_Booking_Management', request)
+    if (Client_Booking_ManagmentID) {
+      URL = '/Update_Client_Booking_Management'
+      request.Client_Booking_ManagmentID = Client_Booking_ManagmentID
+    } else {
+      URL = '/Create_Client_Booking_Management'
+      request.ClientID = props.selectedClientData.ClientID
+    }
+
+    fetchPostData(URL, request)
       .then(response => {
         if (response.success) {
-          // const updatedData = { ...selectedClientData, ...request }
-          // localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
-          toast.success(response.extras.Status || 'Added Successfully')
+          toast.success(response.extras.Status || `${Client_Booking_ManagmentID ? 'Updated' : 'Added'} Successfully`)
         }
       })
       .catch(error => {
@@ -172,10 +180,7 @@ export default function BookingPopup(props) {
         {
 
         }
-        <BookingAvalibility
-          createBookingFormData={createBookingFormData}
-          handleBooking={handleBooking}
-        />
+        <BookingAvalibility createBookingFormData={createBookingFormData} handleBooking={handleBooking} />
 
         {/* <CheckBox
           initialValue={selctedCheckBox.unavaiableDetes}
@@ -232,11 +237,11 @@ export default function BookingPopup(props) {
         <div>
           <ShowHideButton onClick={toggle}>{`${isHide ? 'Show' : 'Hide'}`} advanced booking type settings</ShowHideButton>
         </div>
-        {!isHide && <AdvanceBooking handleCheckboxChange={handleCheckboxChange} selctedCheckBox={selctedCheckBox} createBookingFormData={createBookingFormData} handleBooking={handleBooking} />}
+        {!isHide && <AdvanceBooking handleCheckboxChange={handleCheckboxChange} selctedCheckBox={selctedCheckBox} createBookingFormData={createBookingFormData} selectedBooking={selectedBooking} handleBooking={handleBooking} />}
 
         <ButtonContainer>
-          <button onClick={handleSave}>Create Booking</button>
           <button onClick={closePopup}>Cancel</button>
+          <button onClick={() => handleSave(selectedBooking.Client_Booking_ManagmentID)}>{selectedBooking.Client_Booking_ManagmentID ? 'Update' : 'Create'} Booking</button>
         </ButtonContainer>
       </SectionContainer >
     </div >
@@ -291,7 +296,6 @@ const TextInput = styled.input`
   }
   &.price{
     width:20%;
-    margin-left: -20px;
     align-items: baseline;
    
   }

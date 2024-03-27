@@ -7,9 +7,27 @@ import { toast } from 'react-toastify';
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function BookingAvailability({ createBookingFormData, handleBooking }) {
+    console.log('createBookingFormData ===>>> ', createBookingFormData.Weekly_Available_Slots_Array)
     const [selectedDays, setSelectedDays] = useState([]);
-    const [timeSlots, setTimeSlots] = useState({});
+    const [timeSlots, setTimeSlots] = useState();
     const [inputsChanged, setInputsChanged] = useState(false);
+
+    // useEffect to set default time slots when data is available
+    useEffect(() => {
+        if (createBookingFormData?.Weekly_Available_Slots_Array) {
+            const defaultTimeSlots = {};
+            createBookingFormData.Weekly_Available_Slots_Array.forEach(slot => {
+                const day = weekdays[slot.Day_Number - 1];
+                defaultTimeSlots[day] = slot.Time_Slots.map(timeSlot => ({
+                    From_Time: timeSlot.From_Time,
+                    To_Time: timeSlot.To_Time
+                }));
+            });
+            setTimeSlots(defaultTimeSlots);
+            setSelectedDays(Object.keys(defaultTimeSlots));
+        }
+    }, [createBookingFormData]);
+
 
     useEffect(() => {
         setInputsChanged(true);
@@ -49,6 +67,7 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
     };
 
     const handleTimeChange = (day, index, key, value) => {
+        console.log(key, value)
         const newTimeSlots = { ...timeSlots };
         newTimeSlots[day][index][key] = value;
         setTimeSlots(newTimeSlots);
@@ -97,13 +116,13 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
                 {slots.map((slot, index) => (
                     <div key={index}>
                         <TextInput
-                            type="text"
+                            type="time"
                             value={slot.From_Time}
                             placeholder="Start time"
                             onChange={(e) => handleTimeChange(day, index, 'From_Time', e.target.value)}
                         />
                         <TextInput
-                            type="text"
+                            type="time"
                             value={slot.To_Time}
                             placeholder="End time"
                             onChange={(e) => handleTimeChange(day, index, 'To_Time', e.target.value)}
@@ -112,7 +131,7 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
                             <Button onClick={() => handleAddTimeSlot(day)}>+ Add Time Slot</Button>
                         )}
                         {index !== slots.length - 1 && (
-                            <Button onClick={() => handleRemoveTimeSlot(day, index)}>Remove</Button>
+                            <Button className='remove' onClick={() => handleRemoveTimeSlot(day, index)}>Remove</Button>
                         )}
                     </div>
                 ))}
@@ -128,33 +147,37 @@ export default function BookingAvailability({ createBookingFormData, handleBooki
             {createBookingFormData?.Booking_Type === '1' ? (
                 <>
                     {weekdays.map((day, index) => (
-                        <DayWrapper key={day}>
-                            <div style={{ width: "20%" }}>
-                                <input
-                                    type="checkbox"
-                                    name="weekdays"
-                                    id={day}
-                                    value={day}
-                                    onChange={(e) => handleSelectedDays(e.target.value)}
-                                />
-                                <label htmlFor={day}>{day}</label>
-                            </div>
-                            <div>
-                                {selectedDays.includes(day) ? (
-                                    <>
-                                        {renderTimeSlots(day)}
-                                    </>
-                                ) : (
-                                    <div>Unavailable</div>
-                                )}
-                            </div>
-                            <hr></hr>
-                        </DayWrapper>
+                        <>
+                            <DayWrapper key={day}>
+                                <div style={{ width: "20%" }}>
+                                    <input
+                                        type="checkbox"
+                                        name="weekdays"
+                                        id={day}
+                                        value={day}
+                                        onChange={(e) => handleSelectedDays(e.target.value)}
+                                        checked={selectedDays.includes(day)}
+                                    />
+                                    <label htmlFor={day}>{day}</label>
+                                </div>
+                                <div>
+                                    {selectedDays.includes(day) ? (
+                                        <>
+                                            {renderTimeSlots(day)}
+                                        </>
+                                    ) : (
+                                        <div>Unavailable</div>
+                                    )}
+                                </div>
+
+                            </DayWrapper>
+                            <HorizontalLine />
+                        </>
                     ))}
                     <SaveButton onClick={handleSaveSlots} disabled={!inputsChanged}>Save Slots</SaveButton>
                 </>
             ) : createBookingFormData?.Booking_Type === '2' ? (
-                <SpecificDate isMulti={true} />
+                <SpecificDate createBookingFormData={createBookingFormData} handleBooking={handleBooking} />
             ) : (
                 ' '
             )}
@@ -181,6 +204,11 @@ const DayWrapper = styled.div`
             flex: 1;
         }
 `;
+const HorizontalLine = styled.hr`
+    border: 0;
+    border-top: 1px solid  #8b8787;
+    margin: 10px 0;
+`;
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
@@ -191,6 +219,9 @@ const Button = styled.button`
     font-size: 16px;
     position: absolute;
     right: 41px;
+    &.remove{
+        background-color: #f73939;
+    }
 `;
 const SaveButton = styled.button`
     background-color: ${colors.primary};
@@ -200,7 +231,7 @@ const SaveButton = styled.button`
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 20px;
+    width: 135px;
     opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
     pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 `;

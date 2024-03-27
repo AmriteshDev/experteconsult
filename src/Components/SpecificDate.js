@@ -1,243 +1,154 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
-import SpecificDate from './SpecificDate';
+import { toast } from 'react-toastify';
 
-const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+export default function SpecificDate({ createBookingFormData, handleBooking }) {
+    const [inputsChanged, setInputsChanged] = useState(false);
 
-export default function BookingAvailability({ createBookingFormData, choosenSlots }) {
-    const [selectedDays, setSelectedDays] = useState([]);
-    const [timeSlots, setTimeSlots] = useState({});
+    const [specificDatesSlots, setSpecificDatesSlots] = useState([
+        { Specific_Date: '', From_Time: '', To_Time: '' }
+    ]);
 
-    const handleSelectedDays = (value) => {
-        if (!selectedDays.includes(value)) {
-            setSelectedDays([...selectedDays, value]);
-            setTimeSlots(prevState => ({
-                ...prevState,
-                [value]: [{ From_Time: '', To_Time: '' }]
-            }));
-        } else {
-            setSelectedDays(selectedDays.filter(day => day !== value));
-            const newTimeSlots = { ...timeSlots };
-            delete newTimeSlots[value];
-            setTimeSlots(newTimeSlots);
-        }
+    useEffect(() => {
+        setInputsChanged(true);
+    }, [specificDatesSlots]);
+
+    const handleAddTimeSlot = () => {
+        setSpecificDatesSlots(prevSlots => [...prevSlots, { Specific_Date: '', From_Time: '', To_Time: '' }]);
     };
 
-    const handleAddTimeSlot = (day) => {
-        const newTimeSlot = {
-            From_Time: '',
-            To_Time: ''
-        };
-        setTimeSlots(prevState => ({
-            ...prevState,
-            [day]: [...(prevState[day] || []), newTimeSlot]
-        }));
+    const handleRemoveTimeSlot = index => {
+        setSpecificDatesSlots(prevSlots => prevSlots.filter((slot, i) => i !== index));
     };
 
-    const handleRemoveTimeSlot = (day, index) => {
-        setTimeSlots(prevState => ({
-            ...prevState,
-            [day]: prevState[day].filter((slot, i) => i !== index)
-        }));
+    const handleTimeChange = (index, key, value) => {
+        const newTimeSlots = [...specificDatesSlots];
+        newTimeSlots[index][key] = value;
+        setSpecificDatesSlots(newTimeSlots);
     };
 
-    const handleTimeChange = (day, index, key, value) => {
-        const newTimeSlots = { ...timeSlots };
-        newTimeSlots[day][index][key] = value;
-        setTimeSlots(newTimeSlots);
-    };
-
-    const generateWeeklySlotsArray = () => {
-        const weeklySlotsArray = [];
-        weekdays.forEach((day, index) => {
-            if (selectedDays.includes(day)) {
-                const timeSlotsForDay = timeSlots[day] || [];
-                weeklySlotsArray.push({
-                    Day_Number: index + 1,
-                    Time_Slots: timeSlotsForDay
-                });
-            }
-        });
-        return weeklySlotsArray;
-    };
-
-    const generateSpecificSlotsArray = () => {
-        const specificSlotsArray = [];
-        selectedDays.forEach(day => {
-            const timeSlotsForDay = timeSlots[day] || [];
-            specificSlotsArray.push({
-                Date: day,
-                Time_Slots: timeSlotsForDay
-            });
-        });
-        return specificSlotsArray;
+    const validateTimeSlots = () => {
+        return specificDatesSlots.every(slot =>
+            slot.Specific_Date.trim() !== '' &&
+            slot.From_Time.trim() !== '' &&
+            slot.To_Time.trim() !== ''
+        );
     };
 
     const handleSaveSlots = () => {
-        const slots = createBookingFormData?.Option === 'weekly' ? generateWeeklySlotsArray() : generateSpecificSlotsArray();
-        choosenSlots({ Slots_Array: slots });
+        if (validateTimeSlots()) {
+            const formattedSlots = specificDatesSlots.map(slot => ({
+                Specific_Date: slot.Specific_Date,
+                Time_Slots: [{
+                    From_Time: slot.From_Time,
+                    To_Time: slot.To_Time
+                }]
+            }));
+            handleBooking("Specific_Dates_Available_Slots_Array", formattedSlots);
+            setInputsChanged(false);
+        } else {
+            toast.error('Please fill in all fields for each time slot.');
+        }
     };
 
-    const renderTimeSlots = (day) => {
-        const slots = timeSlots[day] || [];
-        return (
-            <>
-                {slots.map((slot, index) => (
-                    <div key={index}>
-                        <TextInput
-                            type="text"
-                            value={slot.From_Time}
-                            placeholder="Start time"
-                            onChange={(e) => handleTimeChange(day, index, 'From_Time', e.target.value)}
-                        />
-                        <TextInput
-                            type="text"
-                            value={slot.To_Time}
-                            placeholder="End time"
-                            onChange={(e) => handleTimeChange(day, index, 'To_Time', e.target.value)}
-                        />
-                        {index === slots.length - 1 && (
-                            <Button onClick={() => handleAddTimeSlot(day)}>+ Add Time Slot</Button>
-                        )}
-                        {index !== slots.length - 1 && (
-                            <Button onClick={() => handleRemoveTimeSlot(day, index)}>Remove</Button>
-                        )}
-                    </div>
-                ))}
-                {slots.length === 0 && (
-                    <Button onClick={() => handleAddTimeSlot(day)}>+ Add Time Slot</Button>
-                )}
-            </>
-        );
+    const renderTimeSlots = () => {
+        return specificDatesSlots.map((slot, index) => (
+            <DateWrapper key={index}>
+                <TextInput
+                    type="date"
+                    value={slot.Specific_Date}
+                    placeholder="Specific Date"
+                    onChange={e => handleTimeChange(index, 'Specific_Date', e.target.value)}
+                />
+                <TextInput
+                    type="time"
+                    value={slot.From_Time}
+                    placeholder="Start time"
+                    onChange={e => handleTimeChange(index, 'From_Time', e.target.value)}
+                />
+                <TextInput
+                    type="time"
+                    value={slot.To_Time}
+                    placeholder="End time"
+                    onChange={e => handleTimeChange(index, 'To_Time', e.target.value)}
+                />
+
+                {index !== 0 && <Button className='remove' onClick={() => handleRemoveTimeSlot(index)}>Remove</Button>}
+            </DateWrapper>
+        ));
     };
 
     return (
         <Container>
-            {createBookingFormData?.Option === 'weekly' ? (
-                <WeeklyAvailability>
-                    {weekdays.map((day, index) => (
-                        <DayWrapper key={day}>
-                            <div style={{ width: "20%" }}>
-                                <input
-                                    type="checkbox"
-                                    name="weekdays"
-                                    id={day}
-                                    value={day}
-                                    onChange={(e) => handleSelectedDays(e.target.value)}
-                                />
-                                <label htmlFor={day}>{day}</label>
-                            </div>
-                            <div>
-                                {selectedDays.includes(day) ? (
-                                    <>
-                                        {renderTimeSlots(day)}
-                                    </>
-                                ) : (
-                                    <div>Unavailable</div>
-                                )}
-                            </div>
-                            <hr />
-                        </DayWrapper>
-                    ))}
-                </WeeklyAvailability>
-            ) : createBookingFormData?.Option === 'specificDate' ? (
-                <SpecificDateAvailability>
-                    <SpecificDateSlots>
-                        <SpecificDate isMulti={true} />
-                    </SpecificDateSlots>
-                    {selectedDays.map(day => (
-                        <DayWrapper key={day}>
-                            <div>
-                                {day}
-                            </div>
-                            <div>
-                                {renderTimeSlots(day)}
-                            </div>
-                            <hr />
-                        </DayWrapper>
-                    ))}
-                </SpecificDateAvailability>
-            ) : null}
-            <SaveButton onClick={handleSaveSlots}>Save Slots</SaveButton>
+            {createBookingFormData?.Booking_Type === '2' && (
+                <>
+                    {renderTimeSlots()}
+                    <Button onClick={handleAddTimeSlot}>+ Add Time Slot</Button>
+                    <SaveButton onClick={handleSaveSlots} disabled={!inputsChanged}>Save Slots</SaveButton>
+                </>
+            )}
         </Container>
     );
 }
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: ${colors.white};
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: ${colors.white};
 `;
 
-const WeeklyAvailability = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SpecificDateAvailability = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SpecificDateSlots = styled.div`
-  margin-bottom: 10px;
-`;
-
-const DayWrapper = styled.div`
-  display: flex;
-  margin-top: 15px;
-
-  div:first-of-type {
-    width: 30%;
-  }
-
-  div:not(:first-of-type) {
-    flex: 1;
-  }
+const DateWrapper = styled.div`
+    display: flex;
+    margin-top: 15px;
 `;
 
 const Button = styled.button`
-  background-color: ${colors.primary};
-  color: ${colors.white};
-  padding: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 10px;
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    position: absolute;
+    margin-top: 16px;
+    right: 41px;
+    &.remove {
+        background-color: #f73939;
+    }
 `;
 
 const SaveButton = styled.button`
-  background-color: ${colors.primary};
-  color: ${colors.white};
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 135px;
+    opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
+    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 `;
 
 const TextInput = styled.input`
-  width: 30%;
-  padding: 10px;
-  border: 1px solid ${colors.gray};
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: ${colors.primary};
-  }
-
-  &:hover {
-    border-color: ${colors.primary};
-  }
-
+    width: 25%;
+    padding: 10px;
+    border: 1px solid ${colors.gray};
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    cursor: pointer;
+    &:focus {
+        outline: none;
+        border-color: ${colors.primary};
+    }
+    &:hover {
+        border-color: ${colors.primary};
+    }
+    margin-right: 10px;
 `;

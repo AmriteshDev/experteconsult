@@ -11,10 +11,9 @@ const BookingManagement = ({ selectedClientData }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [onClose, setOnClose] = useState(false)
   const [bookings, setBookings] = useState([])
+  const [selectedBooking, setSelectedBooking] = useState([])
 
-  const handleCreateBooking = (e) => {
-  };
-
+  console.log("Booking......", bookings)
   useEffect(() => {
     console.log('selectedClientData ===>>> ', selectedClientData)
     const request = {
@@ -38,6 +37,11 @@ const BookingManagement = ({ selectedClientData }) => {
       });
   }, [])
 
+  const handleUpdateBooking = (booking_id) => {
+    const selectedBooking = bookings.filter((item) => item.Client_Booking_ManagmentID === booking_id)
+    setSelectedBooking(selectedBooking)
+    setIsOpen(true)
+  };
 
 
   return (
@@ -59,7 +63,7 @@ const BookingManagement = ({ selectedClientData }) => {
                 <TableColumnCell>{item.Client_Booking_ManagmentID || ''}</TableColumnCell>
                 <TableColumnCell>{item.Title || ''}</TableColumnCell>
                 <TableColumnCell>{item.Status || ''}</TableColumnCell>
-                <TableColumnCell><button>Edit</button></TableColumnCell>
+                <TableColumnCell><button onClick={(e) => handleUpdateBooking(item.Client_Booking_ManagmentID)}>Edit</button></TableColumnCell>
               </TableRow>
             ))
           }
@@ -81,7 +85,7 @@ const BookingManagement = ({ selectedClientData }) => {
           },
         }}
       >
-        <BookingPopup closePopup={() => setIsOpen(false)} isPopupOpen={isPopupOpen} selectedClientData={selectedClientData} handleCreateBooking={handleCreateBooking} />
+        <BookingPopup closePopup={() => setIsOpen(false)} isPopupOpen={isPopupOpen} selectedBooking={selectedBooking} selectedClientData={selectedClientData} />
       </Modal>
     </>
   );

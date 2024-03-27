@@ -7,8 +7,8 @@ import RadioButton from './RadioButton';
 
 
 
-export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, createBookingFormData, handleBooking }) {
-    const [Location_Type, setLocation_Type] = useState(1);
+export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, createBookingFormData, handleBooking, selectedBooking }) {
+    const [Location_Type, setLocation_Type] = useState(selectedBooking.Location_Type || 1);
 
     const handleLocation = (value) => {
         setLocation_Type(parseInt(value))
@@ -25,14 +25,14 @@ export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, 
                     <InputContainer>
                         <Label>How far out can users book?</Label>
                         <div style={{ display: 'flex', marginTop: "10px", marginLeft: "10px" }}>
-                            <TextInput name='Far_Days_User_Can_Book' onChange={(e) => handleBooking("Far_Days_User_Can_Book", e.target.value)} value={createBookingFormData.Far_Days_User_Can_Book} rows={3} /> <Label className='sublabel'>days ahead.</Label>
+                            <TextInput type="number" name='Far_Days_User_Can_Book' onChange={(e) => handleBooking("Far_Days_User_Can_Book", e.target.value)} value={createBookingFormData.Far_Days_User_Can_Book} rows={3} /> <Label className='sublabel'>days ahead.</Label>
                         </div>
 
                     </InputContainer>
                     <InputContainer>
                         <Label>Minimun meeting padding:</Label>
                         <div style={{ display: 'flex', marginTop: "10px", marginLeft: "10px" }}>
-                            <TextInput name='Minimum_Meeting_Padding_Minutes' onChange={(e) => handleBooking("Minimum_Meeting_Padding_Minutes", e.target.value)} value={createBookingFormData.Minimum_Meeting_Padding_Minutes} rows={3} /><Label className='sublabel'> minutes.</Label>
+                            <TextInput type="number" name='Minimum_Meeting_Padding_Minutes' onChange={(e) => handleBooking("Minimum_Meeting_Padding_Minutes", e.target.value)} value={createBookingFormData.Minimum_Meeting_Padding_Minutes} rows={3} /><Label className='sublabel'> minutes.</Label>
                         </div>
                     </InputContainer>
                 </Row>
@@ -40,13 +40,13 @@ export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, 
                     <InputContainer>
                         <Label>Bookers can't schedule within:</Label>
                         <div style={{ display: 'flex', marginTop: "10px", marginLeft: "10px" }}>
-                            <TextInput name='Cannot_Schedule_Within_Hours' onChange={(e) => handleBooking("Cannot_Schedule_Within_Hours", e.target.value)} value={createBookingFormData.Cannot_Schedule_Within_Hours} rows={3} /> <Label className='sublabel'>of current time.</Label>
+                            <TextInput type="number" name='Cannot_Schedule_Within_Hours' onChange={(e) => handleBooking("Cannot_Schedule_Within_Hours", e.target.value)} value={createBookingFormData.Cannot_Schedule_Within_Hours} rows={3} /> <Label className='sublabel'>of current time.</Label>
                         </div>
                     </InputContainer>
                     <InputContainer>
                         <Label>Available time slot interval:</Label>
                         <div style={{ display: 'flex', marginTop: "10px", marginLeft: "10px" }}>
-                            <TextInput name='Slot_Interval_Minutes' onChange={(e) => handleBooking("Slot_Interval_Minutes", e.target.value)} value={createBookingFormData.Slot_Interval_Minutes} rows={3} /><Label className='sublabel'>of current time.</Label>
+                            <TextInput type="number" name='Slot_Interval_Minutes' onChange={(e) => handleBooking("Slot_Interval_Minutes", e.target.value)} value={createBookingFormData.Slot_Interval_Minutes} rows={3} /><Label className='sublabel'>of current time.</Label>
                         </div>
                     </InputContainer>
                 </Row>
@@ -59,7 +59,7 @@ export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, 
             {
                 selctedCheckBox.Whether_Booking_Limit_Per_Day &&
                 <div style={{ display: 'flex', marginTop: "10px", marginLeft: "10px" }}>
-                    <TextInput name='Booking_Limit_Per_Day' onChange={(e) => handleBooking("Booking_Limit_Per_Day", e.target.value)} value={createBookingFormData.Booking_Limit_Per_Day} rows={3} /><Label className='sublabel'>per day</Label>
+                    <TextInput type="number" name='Booking_Limit_Per_Day' onChange={(e) => handleBooking("Booking_Limit_Per_Day", e.target.value)} value={createBookingFormData.Booking_Limit_Per_Day} rows={3} /><Label className='sublabel'>per day</Label>
                 </div>
             }
 
@@ -77,7 +77,7 @@ export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, 
                     Location_Type === 1 &&
                     <InputContainer>
                         <Label>URL</Label>
-                        <TextInput name="URL" onChange={(e) => handleBooking("URL", e.target.value)} value={createBookingFormData.URL} placeholder="Enter URL" />
+                        <TextInput type='url' name="URL" onChange={(e) => handleBooking("URL", e.target.value)} value={createBookingFormData.URL} placeholder="Enter URL" />
                     </InputContainer>
                 }
                 {
@@ -91,7 +91,7 @@ export default function AdvanceBooking({ handleCheckboxChange, selctedCheckBox, 
                     Location_Type === 3 &&
                     <InputContainer>
                         <Label>PhoneNumber</Label>
-                        <TextInput name='PhoneNumber' onChange={(e) => handleBooking("PhoneNumber", e.target.value)} value={createBookingFormData.PhoneNumber} placeholder="Enter Your PhoneNumber" rows={3} />
+                        <TextInput type="tel" placeholder="123-4567-8901" name='PhoneNumber' onChange={(e) => handleBooking("PhoneNumber", e.target.value)} value={createBookingFormData.PhoneNumber} rows={3} />
                     </InputContainer>
                 }
             </LocationContainer>
