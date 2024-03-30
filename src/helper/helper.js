@@ -21,3 +21,21 @@ export async function fetchPostData(url, requestData) {
         throw error;
     }
 }
+
+const imageURL = 'https://api.experteconsult.com/upload';
+
+export async function saveImage(formData) {
+    try {
+        const ProfileData = JSON.parse(localStorage.getItem('ProfileData'));
+        const response = await axios.post(`${imageURL}/Upload_Image`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'AdminID': ProfileData.AdminID,
+                'SessionID': ProfileData.SessionID
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

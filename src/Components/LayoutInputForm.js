@@ -1,112 +1,66 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
-import { fetchPostData } from '../helper/helper';
+import { saveImage } from '../helper/helper';
 import { toast } from 'react-toastify';
 
 const LayoutInputForm = ({ selectedClientData }) => {
-    // const [backgroundImage, setBackgroundImage] = useState(null);
-    // const [profilePicture, setProfilePicture] = useState(null);
-    // const [companyLogo, setCompanyLogo] = useState(null);
-    // const [companyName, setCompanyName] = useState('');
-    // const [introText, setIntroText] = useState('');
-    // const [bannerImage, setBannerImage] = useState(null);
-    // const [bannerVideo, setBannerVideo] = useState(null);
+    const [Image_Original_URL, setImage_Original_URL] = useState("")
 
-    const [formData, setFormData] = useState({
-        backgroundImage: "",
-        profilePicture: "",
-        companyLogo: "",
-        companyName: "",
-        introText: "",
-        bannerVideo: "",
-        bannerImage: "",
-        ClientID: selectedClientData.ClientID,
-    })
+    const handleFormData = async (fieldName, file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('Image_Type', '1');
 
-    const handleFormData = (key, value) => {
-        setFormData({
-            ...formData,
-            [key]: value
-        })
-    }
-
-    const handleSave = (e) => {
-        e.preventDefault();
-
-        const request = {
-            backgroundImage: formData.backgroundImage,
-            profilePicture: formData.profilePicture,
-            companyLogo: formData.companyLogo,
-            companyName: formData.companyName,
-            introText: formData.introText,
-            bannerVideo: formData.bannerVideo,
-            bannerImage: formData.bannerImage,
-            ClientID: formData.ClientID,
-
+        try {
+            const response = await saveImage(formData);
+            console.log('Image uploaded successfully:', response);
+            toast.success('Image uploaded successfully');
+            setImage_Original_URL(response?.extras?.Data?.Image_Original_URL)
+            console.log("Image_Original_URL======>", setImage_Original_URL(response?.extras?.Data?.Image_Original_URL))
+        } catch (error) {
+            toast.error('Failed to upload image');
         }
-
-        fetchPostData('/Update_Client_Basic_Information', request)
-            .then(response => {
-                if (response.success) {
-                    const updatedData = { ...selectedClientData, ...request }
-                    localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
-                    toast.success(response.extras.Status || 'Added Successfully')
-                }
-            })
-            .catch(error => {
-                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
-            });
     };
 
     return (
         <Container>
             <Title>Layout Input</Title>
             <FormContainer>
-                <Form onSubmit={handleSave}>
+                <Form>
                     <InputContainer>
                         <Label>Background Image</Label>
-                        <Input type="file" accept="image/*" name='backgroundImage' value={formData.backgroundImage} onChange={(e) => handleFormData("backgroundImage", e.target.files[0])} />
-                        {formData.backgroundImage && <PreviewImage src={URL.createObjectURL(formData.backgroundImage)} alt="Background Preview" />}
+                        <Input type="file" accept="image/*" name='backgroundImage' onChange={(e) => handleFormData("backgroundImage", e.target.files[0])} />
                     </InputContainer>
-
+                    {Image_Original_URL && <PreviewImage src={Image_Original_URL} alt="Background Preview" />}
                     <InputContainer>
                         <Label>Profile Picture</Label>
-                        <Input type="file" accept="image/*" name='profilePicture' value={formData.profilePicture} onChange={(e) => handleFormData("profilePicture", e.target.files[0])} />
-                        {formData.profilePicture && <PreviewImage src={URL.createObjectURL(formData.profilePicture)} alt="Profile Picture Preview" />}
+                        <Input type="file" accept="image/*" name='profilePicture' onChange={(e) => handleFormData("profilePicture", e.target.files[0])} />
                     </InputContainer>
 
                     <InputContainer>
                         <Label>Logo</Label>
-                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='companyLogo' value={formData.companyLogo} onChange={(e) => handleFormData("companyLogo", e.target.files[0])} />
-                        {formData.companyLogo && <PreviewImage src={URL.createObjectURL(formData.companyLogo)} alt="Logo Preview" />}
+                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='companyLogo' onChange={(e) => handleFormData("companyLogo", e.target.files[0])} />
                     </InputContainer>
 
                     <InputContainer>
                         <Label>Banner Image</Label>
-                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='bannerImage' value={formData.bannerImage} onChange={(e) => handleFormData("bannerImage", e.target.files[0])} />
-                        {formData.bannerImage && <PreviewImage src={URL.createObjectURL(formData.bannerImage)} alt="Banner Image Preview" />}
+                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='bannerImage' onChange={(e) => handleFormData("bannerImage", e.target.files[0])} />
                     </InputContainer>
 
                     <InputContainer>
                         <Label>Banner Video</Label>
-                        <Input type="file" accept="video/*" name='bannerVideo' value={formData.bannerVideo} onChange={(e) => handleFormData("bannerVideo", e.target.files[0])} />
-                        {formData.bannerVideo && (
-                            <PreviewVideo width="320" height="240" controls>
-                                <source src={URL.createObjectURL(formData.bannerVideo)} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </PreviewVideo>
-                        )}
+                        <Input type="file" accept="video/*" name='bannerVideo' onChange={(e) => handleFormData("bannerVideo", e.target.files[0])} />
                     </InputContainer>
 
                     <InputContainer>
                         <Label>Name of the Company</Label>
-                        <Input type="text" name='companyName' value={formData.companyName} onChange={(e) => handleFormData("companyName", e.target.value)} />
+                        <Input type="text" name='companyName' onChange={(e) => handleFormData("companyName", e.target.value)} />
                     </InputContainer>
 
                     <InputContainer>
                         <Label>Text for Intro</Label>
-                        <Textarea name='introText' value={formData.introText} onChange={(e) => handleFormData("introText", e.target.value)} />
+                        <Textarea name='introText' onChange={(e) => handleFormData("introText", e.target.value)} />
                     </InputContainer>
 
                     <Button >Save</Button>

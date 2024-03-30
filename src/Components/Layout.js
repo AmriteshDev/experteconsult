@@ -52,7 +52,7 @@ export default function Layout({ selectedClientData }) {
               />
               <LabelText>Layout {item}</LabelText>
             </RadioLabel>
-            <LayoutBox item={item} />
+            {/* <LayoutBox item={item} /> */}
           </LayoutItem>
         ))}
       </LayoutContainer>

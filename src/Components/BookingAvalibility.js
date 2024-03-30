@@ -7,12 +7,10 @@ import { toast } from 'react-toastify';
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function BookingAvailability({ createBookingFormData, handleBooking }) {
-    console.log('createBookingFormData ===>>> ', createBookingFormData.Weekly_Available_Slots_Array)
     const [selectedDays, setSelectedDays] = useState([]);
     const [timeSlots, setTimeSlots] = useState();
     const [inputsChanged, setInputsChanged] = useState(false);
 
-    // useEffect to set default time slots when data is available
     useEffect(() => {
         if (createBookingFormData?.Weekly_Available_Slots_Array) {
             const defaultTimeSlots = {};

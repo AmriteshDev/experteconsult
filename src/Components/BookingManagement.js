@@ -7,9 +7,9 @@ import { fetchPostData } from '../helper/helper';
 import BookingPopup from './BookingPopup';
 
 const BookingManagement = ({ selectedClientData }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false)
-  const [onClose, setOnClose] = useState(false)
+  // const [onClose, setOnClose] = useState(false)
   const [bookings, setBookings] = useState([])
   const [selectedBooking, setSelectedBooking] = useState([])
 
@@ -74,7 +74,7 @@ const BookingManagement = ({ selectedClientData }) => {
       </Container>
       <Modal
         isOpen={isOpen}
-        onRequestClose={onClose}
+        // onRequestClose={onClose}
         shouldCloseOnOverlayClick={false}
         contentLabel="Max Width Popup"
         style={{
@@ -85,7 +85,7 @@ const BookingManagement = ({ selectedClientData }) => {
           },
         }}
       >
-        <BookingPopup closePopup={() => setIsOpen(false)} isPopupOpen={isPopupOpen} selectedBooking={selectedBooking} selectedClientData={selectedClientData} />
+        <BookingPopup setIsOpen={setIsOpen} selectedBooking={selectedBooking} selectedClientData={selectedClientData} />
       </Modal>
     </>
   );

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import styled from 'styled-components';
 import colors from './colors';
@@ -12,40 +12,45 @@ import { toast } from 'react-toastify';
 const options = [{ value: "1", title: 'Weekly', description: 'You are available one or more time during the week, every week.' }, { value: "2", title: 'Specific dates', description: 'You are available on specific dates.' }];
 
 export default function BookingPopup(props) {
+  const [isHide, setIsHide] = useState(true);
 
-  const { closePopup, isPopupOpen, handleCreateBooking } = props
+  const { setIsOpen } = props
 
   const selectedBooking = props.selectedBooking.length > 0 ? props.selectedBooking[0] : {}
 
-  const [createBookingFormData, setCreateBookingFormData] = useState({
-    Title: selectedBooking.Title || "",
-    URL: selectedBooking.URL || "",
-    Description: selectedBooking.Description || "",
-    Duration: selectedBooking.Duration || null,
-    Price: selectedBooking.Price || null,
-    Offer_Price: selectedBooking.Offer_Price || null,
-    Booking_Type: selectedBooking?.Booking_Type?.toString() || "",
-    Physical_Address: selectedBooking.Physical_Address || "",
-    PhoneNumber: selectedBooking.PhoneNumber || "",
-    Far_Days_User_Can_Book: selectedBooking.Far_Days_User_Can_Book || "",
-    Minimum_Meeting_Padding_Minutes: selectedBooking.Minimum_Meeting_Padding_Minutes || "",
-    Cannot_Schedule_Within_Hours: selectedBooking.Cannot_Schedule_Within_Hours || "",
-    Slot_Interval_Minutes: selectedBooking.Slot_Interval_Minutes || "",
-    Booking_Limit_Per_Day: selectedBooking.Booking_Limit_Per_Day || null,
-    Multiple_Invites_For_Same_Booking: selectedBooking.Multiple_Invites_For_Same_Booking || "",
-    Location_Type: selectedBooking.Location_Type || "",
-    Weekly_Available_Slots_Array: selectedBooking.Weekly_Available_Slots_Array || [],
-    Specific_Dates_Available_Slots_Array: selectedBooking.Specific_Dates_Available_Slots_Array || [],
-  })
-  const [isHide, setIsHide] = useState(true);
+  const [createBookingFormData, setCreateBookingFormData] = useState({})
 
-  const [selctedCheckBox, setSelectedCheckBox] = useState({
-    chargeForBooking: selectedBooking.chargeForBooking ?? false,
-    Whether_Multiple_Invites_For_Same_Booking: selectedBooking.Whether_Multiple_Invites_For_Same_Booking ?? false,
-    Whether_Offer_Price: selectedBooking.Whether_Offer_Price ?? false,
-    Whether_Booking_Limit_Per_Day: selectedBooking.Whether_Booking_Limit_Per_Day ?? false,
-    unavaiableDetes: selectedBooking.unavaiableDete ?? false,
-  })
+  const [selctedCheckBox, setSelectedCheckBox] = useState({})
+
+  useEffect(() => {
+    setCreateBookingFormData({
+      Title: selectedBooking.Title || "",
+      URL: selectedBooking.URL || "",
+      Description: selectedBooking.Description || "",
+      Duration: selectedBooking.Duration || null,
+      Price: selectedBooking.Price || null,
+      Offer_Price: selectedBooking.Offer_Price || null,
+      Booking_Type: selectedBooking?.Booking_Type?.toString() || "",
+      Physical_Address: selectedBooking.Physical_Address || "",
+      PhoneNumber: selectedBooking.PhoneNumber || "",
+      Far_Days_User_Can_Book: selectedBooking.Far_Days_User_Can_Book || "",
+      Minimum_Meeting_Padding_Minutes: selectedBooking.Minimum_Meeting_Padding_Minutes || "",
+      Cannot_Schedule_Within_Hours: selectedBooking.Cannot_Schedule_Within_Hours || "",
+      Slot_Interval_Minutes: selectedBooking.Slot_Interval_Minutes || "",
+      Booking_Limit_Per_Day: selectedBooking.Booking_Limit_Per_Day || null,
+      Multiple_Invites_For_Same_Booking: selectedBooking.Multiple_Invites_For_Same_Booking || "",
+      Location_Type: selectedBooking.Location_Type || "",
+      Weekly_Available_Slots_Array: selectedBooking.Weekly_Available_Slots_Array || [],
+      Specific_Dates_Available_Slots_Array: selectedBooking.Specific_Dates_Available_Slots_Array || [],
+    })
+    setSelectedCheckBox({
+      chargeForBooking: selectedBooking.chargeForBooking ?? false,
+      Whether_Multiple_Invites_For_Same_Booking: selectedBooking.Whether_Multiple_Invites_For_Same_Booking ?? false,
+      Whether_Offer_Price: selectedBooking.Whether_Offer_Price ?? false,
+      Whether_Booking_Limit_Per_Day: selectedBooking.Whether_Booking_Limit_Per_Day ?? false,
+      unavaiableDetes: selectedBooking.unavaiableDete ?? false,
+    })
+  }, [selectedBooking])
 
 
   const handleCheckboxChange = (key, value) => {
@@ -86,7 +91,7 @@ export default function BookingPopup(props) {
       Slot_Interval_Minutes: parseInt(createBookingFormData.Slot_Interval_Minutes),
       Booking_Limit_Per_Day: parseInt(createBookingFormData.Booking_Limit_Per_Day),
       Whether_Multiple_Invites_For_Same_Booking: selctedCheckBox.Whether_Multiple_Invites_For_Same_Booking,
-      Whether_Offer_Price: selctedCheckBox.Whether_Offer_Price,
+      Whether_Offer_Price: selctedCheckBox.Whether_Offer_Price === "1" ? true : false,
       Whether_Booking_Limit_Per_Day: selctedCheckBox.Whether_Booking_Limit_Per_Day,
       Location_Type: parseInt(createBookingFormData.Location_Type),
       Weekly_Available_Slots_Array: createBookingFormData.Weekly_Available_Slots_Array,
@@ -106,6 +111,32 @@ export default function BookingPopup(props) {
       .then(response => {
         if (response.success) {
           toast.success(response.extras.Status || `${Client_Booking_ManagmentID ? 'Updated' : 'Added'} Successfully`)
+          setCreateBookingFormData({
+            Title: "",
+            URL: "",
+            Description: "",
+            Duration: "",
+            Price: "",
+            Offer_Price: "",
+            Booking_Type: "",
+            Physical_Address: "",
+            PhoneNumber: "",
+            Far_Days_User_Can_Book: "",
+            Minimum_Meeting_Padding_Minutes: "",
+            Cannot_Schedule_Within_Hours: "",
+            Slot_Interval_Minutes: "",
+            Booking_Limit_Per_Day: "",
+            Multiple_Invites_For_Same_Booking: "",
+            Location_Type: "",
+            Weekly_Available_Slots_Array: "",
+            Specific_Dates_Available_Slots_Array: "",
+          })
+          setSelectedCheckBox({
+            Whether_Multiple_Invites_For_Same_Booking: false,
+            Whether_Offer_Price: false,
+            Whether_Booking_Limit_Per_Day: false,
+          })
+          setIsOpen(false)
         }
       })
       .catch(error => {
@@ -114,7 +145,7 @@ export default function BookingPopup(props) {
   };
 
   return (
-    <div isOpen={isPopupOpen} onClose={closePopup}>
+    <div >
       <SectionContainer>
         <Title>Create Booking</Title>
         <InputContainer>
@@ -122,10 +153,10 @@ export default function BookingPopup(props) {
           <TextInput name="Title" onChange={(e) => handleBooking("Title", e.target.value)} value={createBookingFormData.Title} placeholder="Enter Title" />
         </InputContainer>
 
-        <InputContainer>
+        {/* <InputContainer>
           <Label>URL</Label>
           <TextInput name="URL" onChange={(e) => handleBooking("URL", e.target.value)} value={createBookingFormData.URL} placeholder="Enter URL" />
-        </InputContainer>
+        </InputContainer> */}
 
         <InputContainer>
           <Label>Description</Label>
@@ -240,7 +271,7 @@ export default function BookingPopup(props) {
         {!isHide && <AdvanceBooking handleCheckboxChange={handleCheckboxChange} selctedCheckBox={selctedCheckBox} createBookingFormData={createBookingFormData} selectedBooking={selectedBooking} handleBooking={handleBooking} />}
 
         <ButtonContainer>
-          <button onClick={closePopup}>Cancel</button>
+          <button onClick={() => setIsOpen(false)}>Cancel</button>
           <button onClick={() => handleSave(selectedBooking.Client_Booking_ManagmentID)}>{selectedBooking.Client_Booking_ManagmentID ? 'Update' : 'Create'} Booking</button>
         </ButtonContainer>
       </SectionContainer >

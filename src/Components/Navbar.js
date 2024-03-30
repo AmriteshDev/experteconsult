@@ -61,7 +61,7 @@ const Navbar = () => {
     <>
       <NavbarContainer>
         <LogoWrapper>
-          <Logo><img width={40} height={40} src={LogoIcon} alt='experteconsult' /></Logo>
+          <Logo><img width={120} height={30} src={LogoIcon} alt='experteconsult' /></Logo>
           <ClientSelect>
             <Select onChange={(e) => handleClientSelect(e.target.value)}>
               <option value="">Select Client</option>

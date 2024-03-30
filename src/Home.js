@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 import CreateUser from './Components/CreateUser';
 import { fetchPostData } from './helper/helper';
 
@@ -55,6 +54,22 @@ const Home = () => {
         }
     };
 
+    const handleStatus = async (status, Selected_AdminID) => {
+
+        console.log('status ===>>> ', status, 'sleted ===>> ', Selected_AdminID)
+        try {
+
+            let URLs = status ? '/Inactivate_Admin' : '/Activate_Admin'
+
+            const response = await fetchPostData(URLs, { Selected_AdminID });
+            if (response.success) {
+                console.log('response ===>>> ', response)
+            }
+        } catch (error) {
+            console.log('user fetching error ===>>> ', error.message)
+        }
+    }
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -73,7 +88,7 @@ const Home = () => {
                         <HeadingCell flex={1}>Email</HeadingCell>
                         <HeadingCell flex={0.3}>Type</HeadingCell>
                         <HeadingCell flex={0.2}>Status</HeadingCell>
-                        <HeadingCell flex={0.2}>Action</HeadingCell>
+                        <HeadingCell flex={0.2}>Edit</HeadingCell>
                     </TableRowHeading>
 
                     {list.map((item, index) => {
@@ -85,15 +100,9 @@ const Home = () => {
                                 <TableDataCell flex={1}>{item.PhoneNumber}</TableDataCell>
                                 <TableDataCell flex={1}>{item.EmailID}</TableDataCell>
                                 <TableDataCell flex={0.3}>{item.Role_Type}</TableDataCell>
-                                <TableDataCell flex={0.2}>{item.status ? 'Active' : 'Inactive'} </TableDataCell>
+                                <TableDataCell flex={0.2} className={item.Status ? "inActive" : "active"} onClick={() => handleStatus(item.Status, item.AdminID)}>{item.Status ? 'Active' : 'Inactive'} </TableDataCell>
                                 <TableDataCell flex={0.2}>
-                                    <Button ref={optionsRefs.current[index]} onClick={() => toggleOptions(index, optionsRefs.current[index])}>{"..."}</Button>
-                                    {selectedOptionIndex === index && (
-                                        <OptionsWrapper style={{ top: optionPosition.top }}>
-                                            <Option onClick={() => { }}>Update</Option>
-                                            <Option onClick={() => console.log('clicked on ..')}>{item.Status ? "Inactive" : "Active"}</Option>
-                                        </OptionsWrapper>
-                                    )}
+                                    Update
                                 </TableDataCell>
                             </TableRow>
                         );
@@ -173,5 +182,12 @@ const Option = styled.div`
 
   &:hover {
     background-color: #f0f0f0;
+  }
+  &.acitve{
+    cursor: pointer;
+  }
+  &.inActive{
+    cursor: pointer;
+    color: red;
   }
 `;
