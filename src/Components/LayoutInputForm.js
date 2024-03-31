@@ -1,75 +1,134 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from './colors';
-import { saveImage } from '../helper/helper';
 import { toast } from 'react-toastify';
+import FileInput from './FileInput';
+import { fetchPostData } from '../helper/helper';
 
 const LayoutInputForm = ({ selectedClientData }) => {
-    const [Image_Original_URL, setImage_Original_URL] = useState("")
+    const [inputs, setInputs] = useState({});
 
-    const handleFormData = async (fieldName, file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('Image_Type', '1');
+    useEffect(() => {
+        setInputs({
+            ClientID: selectedClientData.ClientID || '',
+            Background_ImageID: '',
+            Profile_ImageID: '',
+            Logo_ImageID: '',
+            Logo_Icon_ImageID: '',
+            Company_Name: selectedClientData.Company_Name || '',
+            Intro: selectedClientData.Intro || '',
+            Banner_Array: []
+        })
+    }, [selectedClientData])
 
-        try {
-            const response = await saveImage(formData);
-            console.log('Image uploaded successfully:', response);
-            toast.success('Image uploaded successfully');
-            setImage_Original_URL(response?.extras?.Data?.Image_Original_URL)
-            console.log("Image_Original_URL======>", setImage_Original_URL(response?.extras?.Data?.Image_Original_URL))
-        } catch (error) {
-            toast.error('Failed to upload image');
-        }
+
+
+    const handleChange = (name, id, url) => {
+        setInputs(prevInputs => {
+            let updatedInputs = { ...prevInputs };
+            if (name.startsWith('Banner_')) {
+                const index = name.split('_')[1];
+
+                const extension = url.split('.').pop().toLowerCase();
+                const contentType = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension) ? 'image' : 'video';
+
+                const newBanner = {
+                    Media_Type: contentType === 'image' ? 1 : 2,
+                };
+
+                if (contentType === 'image') {
+                    newBanner.ImageID = id;
+                } else {
+                    newBanner.VideoID = id;
+                }
+
+                if (!updatedInputs.Banner_Array) {
+                    updatedInputs.Banner_Array = [];
+                }
+
+                updatedInputs.Banner_Array[index] = newBanner;
+            } else {
+                updatedInputs[name] = id;
+                updatedInputs[`Whether_${name}_Available`] = !!url;
+            }
+            return updatedInputs;
+        });
     };
+
+    const handleAddBanner = () => {
+        setInputs(prevInputs => ({
+            ...prevInputs,
+            Banner_Array: [...prevInputs.Banner_Array, { id: '', type: '', url: '' }]
+        }));
+    };
+
+    const handleSave = async () => {
+        const request = {
+            ClientID: inputs.ClientID,
+            Whether_Background_Image_Available: !!inputs.Background_ImageID,
+            Background_ImageID: inputs.Background_ImageID,
+            Whether_Profile_Image_Available: !!inputs.Profile_ImageID,
+            Profile_ImageID: inputs.Profile_ImageID,
+            Whether_Logo_Image_Available: !!inputs.Logo_ImageID,
+            Logo_ImageID: inputs.Logo_ImageID,
+            Whether_Logo_Icon_Available: !!inputs.Logo_Icon_ImageID,
+            Logo_Icon_ImageID: inputs.Logo_Icon_ImageID,
+            Whether_Banner_Available: inputs.Banner_Array.length > 0,
+            Banner_Array: inputs.Banner_Array,
+            Company_Name: inputs.Company_Name,
+            Intro: inputs.Intro
+        };
+
+        console.log('Request:', request);
+
+        fetchPostData('/Update_Client_Input', request)
+            .then(response => {
+                if (response.success) {
+                    const updatedData = { ...selectedClientData, ...request }
+                    localStorage.setItem('selectedClientData', JSON.stringify(updatedData))
+                    toast.success('Layout Input updated successfully.')
+                }
+            })
+            .catch(error => {
+                toast.error(error?.response?.data?.extras.msg || 'something went wrong');
+            });
+    };
+
 
     return (
         <Container>
             <Title>Layout Input</Title>
             <FormContainer>
                 <Form>
-                    <InputContainer>
-                        <Label>Background Image</Label>
-                        <Input type="file" accept="image/*" name='backgroundImage' onChange={(e) => handleFormData("backgroundImage", e.target.files[0])} />
-                    </InputContainer>
-                    {Image_Original_URL && <PreviewImage src={Image_Original_URL} alt="Background Preview" />}
-                    <InputContainer>
-                        <Label>Profile Picture</Label>
-                        <Input type="file" accept="image/*" name='profilePicture' onChange={(e) => handleFormData("profilePicture", e.target.files[0])} />
-                    </InputContainer>
-
-                    <InputContainer>
-                        <Label>Logo</Label>
-                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='companyLogo' onChange={(e) => handleFormData("companyLogo", e.target.files[0])} />
-                    </InputContainer>
-
-                    <InputContainer>
-                        <Label>Banner Image</Label>
-                        <Input type="file" accept=".svg, .png, .jpg, .jpeg" name='bannerImage' onChange={(e) => handleFormData("bannerImage", e.target.files[0])} />
-                    </InputContainer>
-
-                    <InputContainer>
-                        <Label>Banner Video</Label>
-                        <Input type="file" accept="video/*" name='bannerVideo' onChange={(e) => handleFormData("bannerVideo", e.target.files[0])} />
-                    </InputContainer>
-
+                    <FileInput label="Background Picture" name="Background_ImageID" onChange={(id, url) => handleChange('Background_ImageID', id, url)} accept="image/*" />
+                    <FileInput label="Profile Picture" name="Profile_ImageID" onChange={(id, url) => handleChange('Profile_ImageID', id, url)} accept="image/*" />
+                    <FileInput label="Logo" name="Logo_ImageID" onChange={(id, url) => handleChange('Logo_ImageID', id, url)} accept="image/*" />
+                    <FileInput label="Logo Icon Image" name="Logo_Icon_ImageID" onChange={(id, url) => handleChange('Logo_Icon_ImageID', id, url)} accept="image/*" />
+                    {inputs.Banner_Array && inputs.Banner_Array.map((banner, index) => (
+                        <FileInput key={index} label={`Banner ${index + 1}`} name={`Banner_${index}`} onChange={(id, url) => handleChange(`Banner_${index}`, id, url)} accept="image/*, video/*" />
+                    ))}
+                    <Button type="button" onClick={handleAddBanner}>Add Banner</Button>
                     <InputContainer>
                         <Label>Name of the Company</Label>
-                        <Input type="text" name='companyName' onChange={(e) => handleFormData("companyName", e.target.value)} />
+                        <Input type="text" name="Company_Name" defaultValue={inputs.Company_Name} onChange={(e) => setInputs(prevInputs => ({ ...prevInputs, Company_Name: e.target.value }))} />
                     </InputContainer>
-
                     <InputContainer>
                         <Label>Text for Intro</Label>
-                        <Textarea name='introText' onChange={(e) => handleFormData("introText", e.target.value)} />
+                        <Textarea
+                            name="Intro"
+                            value={inputs.Intro}
+                            onChange={(e) => setInputs(prevInputs => ({ ...prevInputs, Intro: e.target.value }))}
+                        />
                     </InputContainer>
 
-                    <Button >Save</Button>
+                    <Button type='button' onClick={handleSave}>Save</Button>
                 </Form>
-                <RedBox />
             </FormContainer>
         </Container>
     );
 };
+
+export default LayoutInputForm;
 
 const Container = styled.div`
     width: 95%;
@@ -100,6 +159,20 @@ const Form = styled.form`
     flex: 1;
 `;
 
+const Button = styled.button`
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    max-width: 150px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    align-self: center;
+`;
+
 const InputContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -126,11 +199,9 @@ const Input = styled.input`
     &:hover {
         border-color: ${colors.primary}; 
     }
-    margin-right: 10px 
 `;
 
 const Textarea = styled.textarea`
-    
     resize: vertical;
     padding: 8px;
     border: 1px solid ${colors.gray};
@@ -147,39 +218,4 @@ const Textarea = styled.textarea`
     &:hover {
         border-color: ${colors.primary}; 
     }
-    margin-right: 10px 
 `;
-
-const Button = styled.button`
-    background-color: ${colors.primary};
-    color: ${colors.white};
-    max-width: 150px;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-    align-self: center
-`;
-
-const PreviewImage = styled.img`
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
-`;
-
-const PreviewVideo = styled.video`
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
-`;
-
-const RedBox = styled.div`
-    background-color: red;
-    width: 40%;
-    height: 300px;
-`;
-
-export default LayoutInputForm;

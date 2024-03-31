@@ -68,10 +68,6 @@ export default function Client(props) {
             steps={steps}
           />
         </LeftContainer>
-        <VerticalLine></VerticalLine>
-        <RightContainer>
-          <Title>Form Information</Title>
-        </RightContainer>
       </ContentWrapper>
     </Container>
   );

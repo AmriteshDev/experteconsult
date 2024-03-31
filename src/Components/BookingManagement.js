@@ -7,15 +7,11 @@ import { fetchPostData } from '../helper/helper';
 import BookingPopup from './BookingPopup';
 
 const BookingManagement = ({ selectedClientData }) => {
-  // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false)
-  // const [onClose, setOnClose] = useState(false)
   const [bookings, setBookings] = useState([])
   const [selectedBooking, setSelectedBooking] = useState([])
 
-  console.log("Booking......", bookings)
   useEffect(() => {
-    console.log('selectedClientData ===>>> ', selectedClientData)
     const request = {
       "ClientID": selectedClientData.ClientID,
       "Skip": 0,
@@ -27,7 +23,6 @@ const BookingManagement = ({ selectedClientData }) => {
     }
     fetchPostData('/Filter_All_Client_Booking_Managements', request)
       .then(response => {
-        console.log("response===>", response)
         if (response.success) {
           setBookings(response.extras.Data)
         }
