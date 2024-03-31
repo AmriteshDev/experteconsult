@@ -50,6 +50,7 @@ const LayoutInputForm = ({ selectedClientData }) => {
             } else {
                 updatedInputs[name] = id;
                 updatedInputs[`Whether_${name}_Available`] = !!url;
+                updatedInputs[`URL${name}`] = url
             }
             return updatedInputs;
         });
