@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Login from './Login.js';
-import Home from './Home.js';
 
 function App() {
 	const [userData, setUserData] = useState(null);

@@ -4,7 +4,7 @@ import { fetchPostData } from '../helper/helper';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import colors from './colors';
-
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Row, Col, Label } from 'reactstrap';
 
 const roleLabels = [
     { id: 'WetherClients', title: 'Clients' },
@@ -29,29 +29,43 @@ const roleLabels = [
     { id: 'WetherContact', title: 'Client Contact' },
 ];
 
-function CreateUser(props) {
+function CreateUser({ onSuccess, selectedUserDetails, isOpen, toggle }) {
 
-    const [formData, setFormData] = useState({
-        Role_Type: '',
-        Name: '',
-        PhoneNumber: '',
-        EmailID: '',
-        Password: '',
-        Whether_All_Clients: false,
-        Designation: '',
-        Roles: '',
-        ClientID_Array: []
-    });
-    const [selectedOption, setSelectedOption] = useState("")
+    const [formData, setFormData] = useState({});
+    const [selectedOption, setSelectedOption] = useState(false);
+    const [selectedOptionList, setSelectedOptionList] = useState(false);
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
-        getClentData()
-    }, [])
+        getClentData();
+    }, []);
+
+    useEffect(() => {
+        setFormData({
+            Role_Type: selectedUserDetails?.Role_Type || '',
+            Selected_AdminID: selectedUserDetails?.AdminID || '',
+            Name: selectedUserDetails?.Name || '',
+            PhoneNumber: selectedUserDetails?.PhoneNumber || '',
+            EmailID: selectedUserDetails?.EmailID || '',
+            Password: selectedUserDetails?.Password || '',
+            Whether_All_Clients: selectedUserDetails?.Whether_All_Clients || false,
+            Designation: selectedUserDetails?.Designation || '',
+            Roles: selectedUserDetails?.Roles || '',
+            ClientID_Array: selectedUserDetails?.ClientID_Array || []
+        })
+
+
+        if (selectedUserDetails?.ClientID_Array && selectedUserDetails?.ClientID_Array.length > 0) {
+            const selectedOptions = selectedUserDetails.ClientID_Array.map(clientId => {
+                return options.find(option => option.value === clientId);
+            }).filter(Boolean);
+            setSelectedOptionList(selectedOptions);
+        }
+    }, [selectedUserDetails])
 
     const handleAllClientsCheckboxChange = (event) => {
         const isChecked = event.target.checked;
-        setSelectedOption(isChecked ? options : []);
+        setSelectedOption(isChecked);
         setFormData({
             ...formData,
             Whether_All_Clients: isChecked
@@ -61,7 +75,7 @@ function CreateUser(props) {
     const getClentData = () => {
         const request = {
             "Skip": 0,
-            "Limit": 10,
+            "Limit": 100,
             "Whether_Status_Filter": false,
             "Status": false,
             "Whether_Search_Filter": false,
@@ -102,25 +116,28 @@ function CreateUser(props) {
             Name: formData.Name,
             PhoneNumber: formData.PhoneNumber,
             EmailID: formData.EmailID,
-            Password: formData.Password,
             Roles: formData.Roles,
             Designation: formData.Designation,
             Whether_All_Clients: formData.Whether_All_Clients,
         }
-        if (formData.Role_Type === "2") {
-            request.ClientID_Array = selectedOption?.map((item) => item.value)
+
+        formData?.Selected_AdminID ? request.Selected_AdminID = formData.Selected_AdminID : request.Password = formData.Password
+
+        if (formData.Role_Type === "2" || formData.Role_Type === 2) {
+            request.ClientID_Array = selectedOptionList?.map((item) => item.value)
         } else {
             request.ClientID_Array = ['test']
         }
 
-        const url = props.Selected_AdminID ? '/Update_Admin_Information' : '/Create_Admin_User';
+        const url = formData?.Selected_AdminID ? '/Update_Admin_Information' : '/Create_Admin_User';
 
         fetchPostData(url, request)
             .then(response => {
                 if (response.success) {
-                    toast.success(response.extras.Status || 'Created Successfully')
+                    toast.success(response.extras.Status || `${formData?.Selected_AdminID ? "Updated" : "Created"} Successfully`)
+                    handleToggle()
                     clearForm()
-                    setSelectedOption([]);
+                    onSuccess()
                 }
             })
             .catch(error => {
@@ -129,17 +146,7 @@ function CreateUser(props) {
     };
 
     const clearForm = () => {
-        setFormData({
-            Role_Type: null,
-            Name: '',
-            PhoneNumber: '',
-            EmailID: '',
-            Password: '',
-            Whether_All_Clients: false,
-            Designation: '',
-            Roles: '',
-            ClientID_Array: []
-        });
+        setFormData({});
     }
 
     const Checkbox = ({ id, title }) => {
@@ -157,9 +164,9 @@ function CreateUser(props) {
         };
 
         return (
-            <label style={{ flexDirection: 'row', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap' }}>
+            <label>
                 <input
-                    style={{ paddingRight: 15 }}
+                    className='m-2'
                     type="checkbox"
                     checked={checked}
                     onChange={handleChange}
@@ -169,102 +176,139 @@ function CreateUser(props) {
         );
     };
 
-    const handleSelet = (selectedOption) => {
-        setSelectedOption(selectedOption)
+    const handleSelect = (selectedOption) => {
+        setSelectedOptionList(selectedOption)
+    }
+
+    const handleToggle = () => {
+        setSelectedOptionList([])
+        toggle()
     }
 
     return (
-        <div>
-            <FormContainer className="form-container">
-                <form onSubmit={handleSubmit}>
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="Role_Type">Type of Admin</FormLabel>
-                        <SelectInput id="Role_Type" name="Role_Type" value={formData.Role_Type} onChange={(e) => handleInput('Role_Type', e.target.value)}>
-                            <option value="">Select an option</option>
-                            <option value={2}>Modular</option>
-                            <option value={3}>Independent</option>
-                        </SelectInput>
-                    </FormGroup>
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="Name">Name</FormLabel>
-                        <Input
-                            type="text"
-                            id="Name"
-                            name="Name"
-                            value={formData.Name}
-                            onChange={(e) => handleInput('Name', e.target.value)}
-                        />
-                    </FormGroup>
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="Designation">Designation</FormLabel>
-                        <Input
-                            type="text"
-                            id="Designation"
-                            name="Designation"
-                            value={formData.Designation}
-                            onChange={(e) => handleInput('Designation', e.target.value)}
-                        />
-                    </FormGroup>
-                    {formData.Role_Type === '2' &&
-                        <FormGroup className="form-group">
-                            <FormLabel htmlFor="Designation">Client
-                                <ClientCheckbox
-                                    type="checkbox"
-                                    checked={formData.Whether_All_Clients}
-                                    onChange={handleAllClientsCheckboxChange}
-                                />
-                                All Clients
-                            </FormLabel>
-                            <Select
-                                isMulti
-                                value={selectedOption}
-                                onChange={handleSelet}
-                                options={options}
-                            />
-                        </FormGroup>
-                    }
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="PhoneNumber">Phone Number</FormLabel>
-                        <Input
-                            type="tel"
-                            id="PhoneNumber"
-                            name="PhoneNumber"
-                            value={formData.PhoneNumber}
-                            onChange={(e) => handleInput('PhoneNumber', e.target.value)}
-                        />
-                    </FormGroup>
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="EmailID">Email Id</FormLabel>
-                        <Input
-                            type="email"
-                            id="EmailID"
-                            name="EmailID"
-                            value={formData.EmailID}
-                            onChange={(e) => handleInput('EmailID', e.target.value)}
-                        />
-                    </FormGroup>
-                    <FormGroup className="form-group">
-                        <FormLabel htmlFor="Password">Password</FormLabel>
-                        <Input
-                            type="password"
-                            id="Password"
-                            name="Password"
-                            value={formData.Password}
-                            onChange={(e) => handleInput('Password', e.target.value)}
-                        />
-                    </FormGroup>
-                    {formData.Role_Type === '2' &&
-                        <CheckboxContainer>
-                            {roleLabels.map((item, index) => (
-                                <Checkbox key={index} id={item.id} title={item.title} />
-                            ))}
-                        </CheckboxContainer>
-                    }
-                    <FormGroup className="form-group">
-                        <FormButton type="submit">{formData.Selected_AdminID ? "Update" : "Create"}</FormButton>
-                    </FormGroup>
-                </form>
-            </FormContainer>
+        <div className='container model-background'>
+            <Modal isOpen={isOpen} toggle={handleToggle} centered={true} style={{ maxWidth: '80%', height: '80vh' }}>
+                <ModalHeader toggle={handleToggle}>Create User</ModalHeader>
+                <ModalBody style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                    <FormContainer className="form-container">
+                        <form onSubmit={handleSubmit}>
+                            <FormGroup className="form-group">
+                                <FormLabel htmlFor="Role_Type">Type of Admin</FormLabel>
+                                <SelectInput id="Role_Type" name="Role_Type" value={formData.Role_Type} onChange={(e) => handleInput('Role_Type', e.target.value)}>
+                                    <option value="">Select an option</option>
+                                    <option value={2}>Modular</option>
+                                    <option value={3}>Independent</option>
+                                </SelectInput>
+                            </FormGroup>
+                            <Row>
+                                <Col md="6">
+                                    <FormGroup className="form-group">
+                                        <FormLabel htmlFor="Name">Name</FormLabel>
+                                        <Input
+                                            type="text"
+                                            id="Name"
+                                            name="Name"
+                                            value={formData.Name}
+                                            onChange={(e) => handleInput('Name', e.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="6">
+                                    <FormGroup className="form-group">
+                                        <FormLabel htmlFor="Designation">Designation</FormLabel>
+                                        <Input
+                                            type="text"
+                                            id="Designation"
+                                            name="Designation"
+                                            value={formData.Designation}
+                                            onChange={(e) => handleInput('Designation', e.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            {(formData.Role_Type === '2' || formData.Role_Type === 2) &&
+                                <FormGroup className="form-group">
+                                    <FormLabel htmlFor="Designation"> Client
+                                        <Label check>
+                                            <ClientCheckbox
+                                                type="checkbox"
+                                                checked={formData.Whether_All_Clients}
+                                                onChange={handleAllClientsCheckboxChange}
+                                            />
+                                            <span className='px-2' id='all-client'>All Clients</span>
+                                        </Label>
+                                    </FormLabel>
+                                    <Select className={selectedOption ? "d-none" : ""}
+                                        isMulti
+                                        value={selectedOptionList}
+                                        onChange={handleSelect}
+                                        options={options}
+                                    />
+                                </FormGroup>
+                            }
+                            <Row>
+                                <Col md="6">
+                                    <FormGroup className="form-group">
+                                        <FormLabel htmlFor="PhoneNumber">Phone Number</FormLabel>
+                                        <Input
+                                            type="tel"
+                                            id="PhoneNumber"
+                                            name="PhoneNumber"
+                                            value={formData.PhoneNumber}
+                                            onChange={(e) => handleInput('PhoneNumber', e.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="6">
+                                    <FormGroup className="form-group">
+                                        <FormLabel htmlFor="EmailID">Email Id</FormLabel>
+                                        <Input
+                                            type="email"
+                                            id="EmailID"
+                                            autoComplete='new-password'
+                                            name="EmailID"
+                                            value={formData.EmailID}
+                                            onChange={(e) => handleInput('EmailID', e.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+
+                            {
+                                !formData?.Selected_AdminID &&
+                                <FormGroup className="form-group">
+                                    <FormLabel htmlFor="Password">Password</FormLabel>
+                                    <Input
+                                        type="password"
+                                        id="Password"
+                                        name="Password"
+                                        autoComplete='new-password'
+                                        value={formData.Password}
+                                        onChange={(e) => handleInput('Password', e.target.value)}
+                                    />
+                                </FormGroup>
+                            }
+                            {(formData.Role_Type === '2' || formData.Role_Type === 2) &&
+                                <Row>
+                                    {roleLabels.map((item, index) => (
+                                        <Col xs="6" sm="4" md="3" key={index}>
+                                            <Checkbox id={item.id} title={item.title} />
+                                        </Col>
+                                    ))}
+                                </Row>
+                            }
+                        </form>
+                    </FormContainer>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="secondary btn-radus-padding" onClick={handleToggle}>
+                        Cancel
+                    </Button>{' '}
+                    <Button color="primary btn-radus-padding btn-color-success" onClick={handleSubmit}>
+                        {formData?.Selected_AdminID ? "Update" : "Create"}
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }
@@ -288,7 +332,7 @@ const FormGroup = styled.div`
 
 const ClientCheckbox = styled.input`
     margin-left: 20px
-`
+`;
 
 const SelectInput = styled.select`
     width: 100%;
@@ -303,10 +347,10 @@ const SelectInput = styled.select`
         border-color: ${colors.primary}; 
     }
     margin-right: 10px 
-   `;
+`;
 
 const Input = styled.input`
-    width: 92%;
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 25px;
@@ -322,8 +366,6 @@ const Input = styled.input`
 `;
 
 const CheckboxContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
 `;
 

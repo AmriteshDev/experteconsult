@@ -1,106 +1,66 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import axios from 'axios';
+import Logo from './assets/images/logo.webp'
+
+import { Button, FormGroup, Label, Input, CardImg } from "reactstrap";
+import { toast } from 'react-toastify';
 
 const Login = (props) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        try {
-            const response = await axios.post('https://api.experteconsult.com/admin/login', {
-                EmailID: username,
-                Password: password,
-            });
+    try {
+      const response = await axios.post('https://api.experteconsult.com/admin/login', {
+        EmailID: username,
+        Password: password,
+      });
 
-            if (response.status !== 200) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
+      if (response.status !== 200) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
 
-            const data = response.data;
+      const data = response.data;
 
-            const userDetail = data.extras.AdminData
-            localStorage.setItem('ProfileData', JSON.stringify(userDetail));
+      const userDetail = data.extras.AdminData
+      localStorage.setItem('ProfileData', JSON.stringify(userDetail));
 
-            window.location.href = '/'
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Error:', error?.response?.data?.extras?.msg);
+      toast.error(error?.response?.data?.extras?.msg || 'Something went wrong')
+    }
+  };
 
-    return (
-        <LoginFormContainer>
-            <LoginFormTitle>Login</LoginFormTitle>
-            <Form onSubmit={handleSubmit}>
+  return (
+    <div className="background">
+      <div className="login-box">
+        <div className="container">
+          <div className="row app-des">
+            <div className="col left-background ">
+              <h2>ExperteConsult</h2>
+              <p>Powered by A.I. Technology</p>
+              <CardImg className="mobile-img" src={Logo} alt="mobile-App" />
+            </div>
+            <div className="col login-form">
+              <form>
+                <h2 className="font-weight-bold mb-4">Login</h2>
                 <FormGroup>
-                    <Label htmlFor="username">Username</Label>
-                    <Input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
-                    />
+                  <Label className="font-weight-bold mb-2">Email</Label>
+                  <Input className="mb-3" type="email" placeholder="email@example.com" onChange={(e) => setUsername(e.target.value)} />
+                  <Label className="font-weight-bold mb-2">Password</Label>
+                  <Input className="mb-3" type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" />
                 </FormGroup>
-                <FormGroup>
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                    />
-                </FormGroup>
-                <Button type="submit">Login</Button>
-            </Form>
-        </LoginFormContainer>
-    );
+                <Button className="mt-3 btn-custom" onClick={handleSubmit}>Login</Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Login;
-
-const LoginFormContainer = styled.div`
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: ${props => props.theme.gray};
-  border-radius: 8px;
-`;
-
-const LoginFormTitle = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 20px;
-`;
-
-const Label = styled.label`
-  font-weight: bold;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid ${props => props.theme.gray};
-`;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;

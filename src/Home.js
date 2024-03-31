@@ -1,193 +1,139 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import CreateUser from './Components/CreateUser';
 import { fetchPostData } from './helper/helper';
+import { Button, Table } from 'reactstrap';
+import { toast } from 'react-toastify';
+import ReactPaginate from 'react-paginate';
 
 const Home = () => {
     const [list, setList] = useState([]);
-    const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
-    const [optionPosition, setOptionPosition] = useState({ top: 0, left: 0 });
-    const optionsRefs = useRef([]);
+    const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
+    const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+    const [pageNumber, setPageNumber] = useState(0);
+    const itemsPerPage = 10;
+    const [totalCount, setTotalCount] = useState(0);
 
     useEffect(() => {
         getList();
-    }, []);
-
-    useEffect(() => {
-        optionsRefs.current = optionsRefs.current.slice(0, list.length);
-    }, [list]);
+    }, [pageNumber]);
 
     const getList = async () => {
         try {
-
             var request = {
-                Skip: 0,
-                Limit: 100,
+                Skip: pageNumber * itemsPerPage,
+                Limit: itemsPerPage,
                 Whether_Status_Filter: false,
                 Status: true,
                 Whether_Search_Filter: false,
             }
             const response = await fetchPostData('/Fetch_All_Admin_Users', request);
             if (response.success) {
-                setList(response.extras.Data);
+                const totalCount = response.extras.Count;
+                const sortedList = response.extras.Data.sort((a, b) => {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+                setList(sortedList);
+                setTotalCount(totalCount);
             }
         } catch (error) {
             console.log('user fetching error ===>>> ', error.message)
         }
     };
 
-    const toggleOptions = (index, buttonRef) => {
-        if (selectedOptionIndex === index) {
-            setSelectedOptionIndex(null);
-        } else {
-            setSelectedOptionIndex(index);
-            const buttonRect = buttonRef.current.getBoundingClientRect();
-            setOptionPosition({
-                top: buttonRect.bottom
-            });
-        }
-    };
-
-    const handleClickOutside = (event) => {
-        if (optionsRefs.current.every(ref => ref.current && !ref.current.contains(event.target))) {
-            setSelectedOptionIndex(null);
-        }
-    };
-
     const handleStatus = async (status, Selected_AdminID) => {
-
-        console.log('status ===>>> ', status, 'sleted ===>> ', Selected_AdminID)
         try {
-
             let URLs = status ? '/Inactivate_Admin' : '/Activate_Admin'
-
             const response = await fetchPostData(URLs, { Selected_AdminID });
             if (response.success) {
-                console.log('response ===>>> ', response)
+                toast.success(response.extras.Status)
+                getList()
             }
         } catch (error) {
             console.log('user fetching error ===>>> ', error.message)
         }
     }
 
-    useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    const openCreateUserModal = () => {
+        setCreateUserModalOpen(true);
+    };
+
+    const closeCreateUserModal = () => {
+        setSelectedUserDetails(null);
+        setCreateUserModalOpen(false);
+    };
+
+    const handleUpdateClick = (data) => {
+        setSelectedUserDetails(data);
+        setCreateUserModalOpen(true);
+    };
+
+    const handlePageClick = (data) => {
+        const selectedPage = data.selected;
+        setPageNumber(selectedPage);
+    };
+
+    const totalPages = Math.ceil(totalCount / itemsPerPage);
 
     return (
-        <Container>
-            <TableWrapper>
-                <TableContainer>
-                    <TableRowHeading>
-                        <HeadingCell flex={0.2}>S.no</HeadingCell>
-                        <HeadingCell flex={1}>Name</HeadingCell>
-                        <HeadingCell flex={1}>Phone</HeadingCell>
-                        <HeadingCell flex={1}>Email</HeadingCell>
-                        <HeadingCell flex={0.3}>Type</HeadingCell>
-                        <HeadingCell flex={0.2}>Status</HeadingCell>
-                        <HeadingCell flex={0.2}>Edit</HeadingCell>
-                    </TableRowHeading>
+        <div className='container'>
+            <div className='mt-3'>
+                <Table responsive bordered className='dark-table'>
+                    <thead>
+                        <tr className='text-center py-1'>
+                            <th colSpan={5} className='h4'>All Users</th>
+                            <th colSpan={2}>
+                                <div>
+                                    <Button className="btn btn-color-success btn-radus-padding" onClick={openCreateUserModal}>Create User</Button>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr className='text-center'>
+                            <th>S.no</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Edit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-                    {list.map((item, index) => {
-                        optionsRefs.current[index] = optionsRefs.current[index] || React.createRef();
-                        return (
-                            <TableRow key={index}>
-                                <TableDataCell flex={0.2}>{index + 1}</TableDataCell>
-                                <TableDataCell flex={1}>{item.Name}</TableDataCell>
-                                <TableDataCell flex={1}>{item.PhoneNumber}</TableDataCell>
-                                <TableDataCell flex={1}>{item.EmailID}</TableDataCell>
-                                <TableDataCell flex={0.3}>{item.Role_Type}</TableDataCell>
-                                <TableDataCell flex={0.2} className={item.Status ? "inActive" : "active"} onClick={() => handleStatus(item.Status, item.AdminID)}>{item.Status ? 'Active' : 'Inactive'} </TableDataCell>
-                                <TableDataCell flex={0.2}>
-                                    Update
-                                </TableDataCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableContainer>
-            </TableWrapper>
-            <CreateUser />
-        </Container>
+                    <tbody>
+
+                        {list.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td className='text-center'>{index + 1}</td>
+                                    <td>{item.Name}</td>
+                                    <td>{item.PhoneNumber}</td>
+                                    <td>{item.EmailID}</td>
+                                    <td className='text-center'>{item.Role_Type}</td>
+                                    <td className='text-center'><Button className='btn btn-radus-padding btn-color-update' onClick={() => handleUpdateClick(item)}>Update</Button></td>
+                                    <td className={`text-center ${item.Status ? "inActive" : "active"}`} onClick={() => handleStatus(item.Status, item.AdminID)}>
+                                        <Button className={`btn-radus-padding ${item.Status ? 'btn btn-success' : 'btn-danger'} `}>{item.Status ? 'Active' : 'Inactive'}</Button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+                <div className='pagination-container'>
+                    <ReactPaginate
+                        className='pagination'
+                        breakLabel="..."
+                        nextLabel=">"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={5}
+                        pageCount={totalPages}
+                        previousLabel="<"
+                        renderOnZeroPageCount={null}
+                    />
+                </div>
+            </div>
+
+            <CreateUser isOpen={isCreateUserModalOpen} toggle={closeCreateUserModal} onSuccess={(() => getList())} selectedUserDetails={selectedUserDetails} />
+        </div>
     );
 };
 
 export default Home;
-
-const OptionsWrapper = styled.div`
-    position: absolute;
-    z-index: 1;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    flex-direction: column; 
-    right: calc(30% + 55px);
-`
-
-const Container = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-`;
-
-const TableWrapper = styled.div`
-  width: 70%;
-`;
-
-const TableContainer = styled.div`
-    width: 95%;
-    margin: 20px auto;
-    align-items: center;
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-`;
-
-const TableRowHeading = styled.div`
-  display: flex;
-  border-bottom: 2px solid black;
-`;
-
-const TableRow = styled.div`
-  display: flex;
-  border-bottom: 1px solid #ccc;
-`;
-
-
-const TableDataCell = styled.div`
-  flex: ${props => props.flex};
-  padding: 10px;
-`;
-
-const HeadingCell = styled.div`
-  flex: ${props => props.flex};
-  padding: 10px;
-  font-color:black;
-  font-weight:600
-`;
-
-const Button = styled.button`
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-`;
-
-const Option = styled.div`
-  padding: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
-  &.acitve{
-    cursor: pointer;
-  }
-  &.inActive{
-    cursor: pointer;
-    color: red;
-  }
-`;

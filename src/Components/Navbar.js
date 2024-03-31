@@ -102,6 +102,7 @@ const NavbarContainer = styled.div`
   background-color: ${props => props.theme.primary};
   color: ${props => props.theme.white};
   padding: 10px 20px;
+  background: #471aa040;
 `;
 
 const Logo = styled.div`
