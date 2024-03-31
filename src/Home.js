@@ -103,7 +103,7 @@ const Home = () => {
                         {list.map((item, index) => {
                             return (
                                 <tr key={index}>
-                                    <td className='text-center'>{index + 1}</td>
+                                    <td className='text-center'>{ (pageNumber * itemsPerPage) + (index + 1)}</td>
                                     <td>{item.Name}</td>
                                     <td>{item.PhoneNumber}</td>
                                     <td>{item.EmailID}</td>
