@@ -72,12 +72,10 @@ const Title = styled.h1`
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
-    max-width: 150px;
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
+    padding: 10px 25px;
     border: none;
-    border-radius: 4px;
+    margin-top: 20px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 16px;
 `;

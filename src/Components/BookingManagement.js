@@ -5,6 +5,7 @@ import colors from './colors';
 import { toast } from 'react-toastify';
 import { fetchPostData } from '../helper/helper';
 import BookingPopup from './BookingPopup';
+import { Button, Table } from 'reactstrap';
 
 const BookingManagement = ({ selectedClientData }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -41,32 +42,42 @@ const BookingManagement = ({ selectedClientData }) => {
 
   return (
     <>
-      <Container>
-        <Title>Booking Management</Title>
-        <TableContainer>
-          <TableRow>
-            <TableHeaderCell flex={0.3} borderRadius="top-left"><Text>S.no</Text></TableHeaderCell>
-            <TableHeaderCell flex={0.4}><Text>Id</Text></TableHeaderCell>
-            <TableHeaderCell flex={1}><Text>Title</Text></TableHeaderCell>
-            <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Status</Text></TableHeaderCell>
-            <TableHeaderCell flex={0.3} borderRadius="top-right"><Text>Action</Text></TableHeaderCell>
-          </TableRow>
-          {
-            bookings && bookings.map((item, index) => (
-              <TableRow key={index}>
-                <TableColumnCell>{index + 1}</TableColumnCell>
-                <TableColumnCell>{item.Client_Booking_ManagmentID || ''}</TableColumnCell>
-                <TableColumnCell>{item.Title || ''}</TableColumnCell>
-                <TableColumnCell>{item.Status || ''}</TableColumnCell>
-                <TableColumnCell><button onClick={(e) => handleUpdateBooking(item.Client_Booking_ManagmentID)}>Edit</button></TableColumnCell>
-              </TableRow>
-            ))
-          }
-          <TableFooter />
-        </TableContainer>
+      <Table responsive bordered className='dark-table'>
+        <thead>
+          <tr className='text-center py-1'>
+            <th colSpan={3} className='h4'>Booking Management</th>
+            <th colSpan={2}>
+              <div>
+                <Button className="btn btn-color-success btn-radus-padding" onClick={() => setIsOpen(true)}>Create Booking</Button>
+              </div>
+            </th>
+          </tr>
+          <tr className='text-center'>
+            <th>S.no</th>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-        <Button onClick={() => setIsOpen(true)}>Create Booking</Button>
-      </Container>
+        <tbody>
+
+          {bookings && bookings.map((item, index) => {
+            return (
+              <tr key={index}>
+                <td className='text-center'>{(index + 1)}</td>
+                <td>{item.Client_Booking_ManagmentID}</td>
+                <td>{item.Title}</td>
+                <td>{item.Status}</td>
+                <td >
+                  <Button onClick={(e) => handleUpdateBooking(item.Client_Booking_ManagmentID)}>Edit</Button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
       <Modal
         isOpen={isOpen}
         // onRequestClose={onClose}
@@ -87,72 +98,3 @@ const BookingManagement = ({ selectedClientData }) => {
 };
 
 export default BookingManagement;
-
-const Container = styled.div`
-width: 95%;
-margin: 20px auto;
-align-items: center;
-flex-direction: column;
-display: flex;
-background-color: #f5f5f5;
-padding: 20px;
-border-radius: 8px;
-box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-`;
-
-const TableContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const TableRow = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
-const TableHeaderCell = styled.div`
-  flex: 1;
-  background-color: #f7f7f7;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`;
-
-const TableColumnCell = styled.div`
-  flex: 1;
-  background-color: #f7f7f7;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`;
-
-const TableFooter = styled.div`
-  background-color: #f7f7f7;
-  height: 18px;
-  margin-left: 3%;
-  margin-right: 3%;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-`;
-
-const Text = styled.span`
-  font-weight: bold;
-`;
-
-const Button = styled.button`
-background-color: ${colors.primary};
-  color: ${colors.white};
-  max-width: 150px;
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  `;
-
-const Title = styled.h1`
-  color: ${colors.black};
-  align-self: center;
-`;

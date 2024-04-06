@@ -106,22 +106,12 @@ const LabelText = styled.span`
   color: ${colors.black};
 `;
 
-const LayoutBox = styled.div`
-  width: 50%;
-  height: 220px;
-  background-color: ${({ item }) => (item === 1 ? 'red' : 'blue')};
-  border: 0.2px solid gray;
-`;
-
 const SaveButton = styled.button`
   background-color: ${colors.primary};
   color: ${colors.white};
-  max-width: 150px;
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
+  padding: 10px 25px;
   border: none;
-  border-radius: 4px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 16px;
 `;

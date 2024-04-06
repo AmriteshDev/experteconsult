@@ -37,6 +37,11 @@ const Home = () => {
             }
         } catch (error) {
             console.log('user fetching error ===>>> ', error.message)
+            if (error.response.data.extras.msg) {
+                localStorage.removeItem("ProfileData");
+                localStorage.removeItem("selectedClientData");
+                window.location.href = "/";
+            }
         }
     };
 
@@ -49,7 +54,7 @@ const Home = () => {
                 getList()
             }
         } catch (error) {
-            console.log('user fetching error ===>>> ', error.message)
+            console.log('Inactivate_Admin fetching error ===>>> ', error.message)
         }
     }
 
@@ -103,7 +108,7 @@ const Home = () => {
                         {list.map((item, index) => {
                             return (
                                 <tr key={index}>
-                                    <td className='text-center'>{ (pageNumber * itemsPerPage) + (index + 1)}</td>
+                                    <td className='text-center'>{(pageNumber * itemsPerPage) + (index + 1)}</td>
                                     <td>{item.Name}</td>
                                     <td>{item.PhoneNumber}</td>
                                     <td>{item.EmailID}</td>

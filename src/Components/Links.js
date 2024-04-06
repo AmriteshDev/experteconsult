@@ -119,9 +119,9 @@ const Label = styled.label`
 
 const Input = styled.input`
     width: 75%;
-    padding: 10px;
+    padding: 10px 15px;
     border: 1px solid ${colors.gray}; 
-    border-radius: 4px;
+    border-radius: 25px;
     box-sizing: border-box;
     font-size: 14px;
     cursor: pointer; 
@@ -138,12 +138,9 @@ const Input = styled.input`
 const Button = styled.button`
     background-color: ${colors.primary};
     color: ${colors.white};
-    max-width: 150px;
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
+    padding: 10px 25px;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 16px;
     align-self: center;
