@@ -1,22 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import BasicInfo from './Components/BasicInfo';
-import Payment from './Components/Payment';
 import MultiStep from 'react-multistep';
 import TermForm from './Components/TermForm';
 import LayoutInputForm from './Components/LayoutInputForm';
 import Layout from './Components/Layout';
 import Links from './Components/Links';
 import BookingManagement from './Components/BookingManagement';
-import Pricing from './Components/Pricing';
-import Customers from './Components/Customers';
 import AboutUs from './Components/AboutUs';
-import ContactUs from './Components/ContactUs';
 import colors from '../src/Components/colors';
+import { useParams } from 'react-router-dom';
 
 export default function Client(props) {
 
-  let selectedClientData = props.details ? JSON.parse(props.details) : ''
+  const [selectedClientData, setSelectedClientData] = useState(null);
+  const { ClientID } = useParams();
+  const multiStepRef = useRef(null);
+
+  useEffect(() => {
+    const data = localStorage.getItem('selectedClientData');
+    if (data && data != 'undefined') {
+      setSelectedClientData(JSON.parse(data));
+    }
+  }, [ClientID]);
 
   const steps = [
     { title: 'Basic Info', component: <BasicInfo selectedClientData={selectedClientData} /> },
@@ -26,47 +32,47 @@ export default function Client(props) {
     { title: 'Booking', component: <BookingManagement selectedClientData={selectedClientData} /> },
     { title: 'Terms', component: <TermForm selectedClientData={selectedClientData} /> },
     { title: 'About Us', component: <AboutUs selectedClientData={selectedClientData} /> },
-    // { title: 'Payment', component: <Payment selectedClientData={selectedClientData} /> },
-    // { title: 'Pricing', component: <Pricing selectedClientData={selectedClientData} /> },
-    // { title: 'Contact Us', component: <ContactUs selectedClientData={selectedClientData} /> },
-    // { title: 'Customers', component: <Customers selectedClientData={selectedClientData} /> },
-
   ];
 
   return (
     <Container>
       <ContentWrapper>
         <LeftContainer>
-          <MultiStep
-            prevButton={{
-              title: 'Back', style: {
-                background: "#cd3b3bed",
-                padding: "10px 20px",
-                fontSize: "15px",
-                color: "white",
-                borderRadius: "25px",
-                border: "none",
-                cursor: 'pointer'
-              }
-            }}
-            nextButton={{
-              title: 'Next',
-              style: {
-                background: '#08c3ff',
-                borderRadius: "25px",
-                padding: "10px 20px",
-                fontSize: "15px",
-                color: "white",
-                border: "none",
-                position: 'absolute',
-                right: '38%',
-                cursor: 'pointer'
-              }
-            }}
-            activeStep={0}
-            showNavigation={true}
-            steps={steps}
-          />
+          {selectedClientData !== null ?
+            <MultiStep
+              ref={multiStepRef}
+              prevButton={{
+                title: 'Back', style: {
+                  background: "#cd3b3bed",
+                  padding: "10px 20px",
+                  fontSize: "15px",
+                  color: "white",
+                  borderRadius: "25px",
+                  border: "none",
+                  cursor: 'pointer'
+                }
+              }}
+              nextButton={{
+                title: 'Next',
+                style: {
+                  background: '#08c3ff',
+                  borderRadius: "25px",
+                  padding: "10px 20px",
+                  fontSize: "15px",
+                  color: "white",
+                  border: "none",
+                  position: 'absolute',
+                  right: '22%',
+                  cursor: 'pointer'
+                }
+              }}
+              activeStep={0}
+              showNavigation={true}
+              steps={steps}
+            />
+            : (
+              <Message>Select a user</Message>
+            )}
         </LeftContainer>
       </ContentWrapper>
     </Container>
@@ -132,16 +138,8 @@ const LeftContainer = styled.div`
     }
 `;
 
-const RightContainer = styled.div`
-  flex: 1;
-  padding: 20px;
+const Message = styled.div`
+  font-size: 18px;
+  color: red;
+  text-align: center;
 `;
-const VerticalLine = styled.div`
-  border-left: 3px solid ${colors.secondary};
- `;
-
-const Title = styled.h1`
-    color: ${colors.black};
-    text-align: center;
-`;
-

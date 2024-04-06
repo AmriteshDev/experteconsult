@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import LogoIcon from '../assets/images/logo.webp';
 import { TbLogout } from "react-icons/tb";
 import { fetchPostData } from '../helper/helper';
-import Client from '../Client';
-import Home from '../Home';
 import colors from './colors';
 
-
 const Navbar = () => {
-  const navigate = useNavigate();
+
+  const { ClientId } = useParams();
   const [clientList, setClientList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-  const ProfileData = JSON.parse(localStorage.getItem('ProfileData')) || {};
+  const navigate = useNavigate();
 
   const logOut = () => {
     localStorage.removeItem("ProfileData");
@@ -21,13 +19,15 @@ const Navbar = () => {
     window.location.href = "/";
   };
 
-  const handleClientSelect = async (client) => {
-    const clientDetail = await fetchClientData();
-    client = client ? JSON.parse(client) : []
-    let filteredClient = clientDetail.filter((item) => item.EmailID === client.EmailID);
-    filteredClient = JSON.stringify(filteredClient[0])
-    setSelectedClient(filteredClient);
-    localStorage.setItem('selectedClientData', filteredClient);
+  const handleClientSelect = (clientId) => {
+    const client = clientList.find(client => client.ClientID === clientId);
+    setSelectedClient(client);
+    localStorage.setItem('selectedClientData', JSON.stringify(client));
+    if (clientId) {
+      navigate(`/client/${clientId}`);
+    } else {
+      navigate(`/`);
+    }
   };
 
   const fetchClientData = async () => {
@@ -57,32 +57,45 @@ const Navbar = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (ClientId) {
+      const client = clientList.find(client => client.ClientID === ClientId);
+      setSelectedClient(client);
+    }
+  }, [ClientId, clientList]);
+
+  const gotoHome = () => {
+    navigate('/');
+  };
+
   return (
     <>
       <NavbarContainer>
         <LogoWrapper>
-          <Logo><img width={120} height={30} src={LogoIcon} alt='experteconsult' /></Logo>
+          <Logo onClick={gotoHome}><img width={120} height={30} src={LogoIcon} alt='experteconsult' /></Logo>
           <ClientSelect>
-            <Select onChange={(e) => handleClientSelect(e.target.value)}>
+            <Select value={selectedClient ? selectedClient.ClientID : ""} onChange={(e) => handleClientSelect(e.target.value)}>
               <option value="">Select Client</option>
               {clientList.map(client => (
-                <option key={client.ClientID} value={JSON.stringify(client)}>{client.EmailID}</option>
+                <option key={client.ClientID} value={client.ClientID}>{client.EmailID}</option>
               ))}
             </Select>
+
           </ClientSelect>
         </LogoWrapper>
         <NavItems>
-          {/* <NavItem onClick={() => setSelectedClient(null)} to="/">Back to admin</NavItem> */}
+          <NavItem to="/">Home</NavItem>
+          <NavItem to="/banner">Banner</NavItem>
+          <NavItem to="/meeting">Meeting</NavItem>
+          <NavItem to="/payment">Payment</NavItem>
+          <NavItem to="/booking">Booking</NavItem>
+          <NavItem to="/documents">Documents</NavItem>
+          <NavItem to="/customers">Customers</NavItem>
+          <NavItem to="/contact">Contact Me</NavItem>
+          <NavItem to="/about">About Us</NavItem>
           <div onClick={logOut}><TbLogout style={{ color: "red", cursor: 'pointer' }} /></div>
         </NavItems>
       </NavbarContainer>
-      {ProfileData && selectedClient ? (
-        <>
-          <Client details={selectedClient} />
-        </>
-      ) : (
-        ProfileData && ProfileData.Role_Type === 1 && <Home />
-      )}
     </>
   );
 };
@@ -107,12 +120,12 @@ const NavbarContainer = styled.div`
 
 const Logo = styled.div`
   font-size: 24px;
+  cursor: pointer;
 `;
 
 const ClientSelect = styled.div`
   select {
     width: 230px;
-    height: 35px;
   }
 `;
 
@@ -123,11 +136,14 @@ const NavItems = styled.div`
 const NavItem = styled(Link)`
   margin-right: 20px;
   text-decoration: none;
+  font-weight: bold;
+  font-family: serif;
   color: ${props => props.theme.white};
   &:hover {
     color: ${props => props.theme.accent};
 	}
 `;
+
 const Select = styled.select`
     width: 100%;
     padding: 8px 10px;
@@ -140,5 +156,5 @@ const Select = styled.select`
     &:hover {
         border-color: ${colors.primary}; 
     }
-    margin-right: 10px 
+    margin-right: 10px;
    `;

@@ -5,7 +5,7 @@ import { Button, Table } from 'reactstrap';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 
-const Home = () => {
+const Home = (props) => {
     const [list, setList] = useState([]);
     const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
     const [selectedUserDetails, setSelectedUserDetails] = useState(null);
@@ -78,6 +78,11 @@ const Home = () => {
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
+
+
+    if (props.type != 1) {
+        return <></>
+    }
 
     return (
         <div className='container'>

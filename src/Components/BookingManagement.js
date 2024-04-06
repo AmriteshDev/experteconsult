@@ -31,7 +31,7 @@ const BookingManagement = ({ selectedClientData }) => {
       .catch(error => {
         toast.error(error?.response?.data?.extras.msg || 'something went wrong');
       });
-  }, [])
+  }, [selectedClientData])
 
   const handleUpdateBooking = (booking_id) => {
     const selectedBooking = bookings.filter((item) => item.Client_Booking_ManagmentID === booking_id)
@@ -70,8 +70,8 @@ const BookingManagement = ({ selectedClientData }) => {
                 <td>{item.Client_Booking_ManagmentID}</td>
                 <td>{item.Title}</td>
                 <td>{item.Status}</td>
-                <td >
-                  <Button onClick={(e) => handleUpdateBooking(item.Client_Booking_ManagmentID)}>Edit</Button>
+                <td className='text-center'>
+                  <Button className='btn-radus-padding' onClick={(e) => handleUpdateBooking(item.Client_Booking_ManagmentID)}>Edit</Button>
                 </td>
               </tr>
             );

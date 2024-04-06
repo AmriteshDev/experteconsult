@@ -104,6 +104,7 @@ const Radio = styled.input`
 
 const LabelText = styled.span`
   color: ${colors.black};
+  margin-top: -10px;
 `;
 
 const SaveButton = styled.button`
@@ -111,6 +112,7 @@ const SaveButton = styled.button`
   color: ${colors.white};
   padding: 10px 25px;
   border: none;
+  margin-top: 20px;
   border-radius: 25px;
   cursor: pointer;
   font-size: 16px;
